@@ -210,3 +210,59 @@
 .final-cta p { color: var(--text-secondary); margin: 0 0 26px; }
 
 @media (min-width: 560px) { .block-h { font-size: 28px; } }
+
+/* ── 약관 동의 ── */
+.consent { margin-top: 24px; }
+/* 실제 체크박스 input은 숨기고 .cbox를 시각적 체크박스로(base.css의 input 전역스타일 회피) */
+.consent input[type="checkbox"] { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; }
+.cbox {
+  flex: 0 0 auto; width: 22px; height: 22px; border-radius: 7px;
+  border: 1.5px solid var(--border-strong); background: #fff;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: background .15s, border-color .15s;
+}
+.cbox::after {
+  content: ""; width: 10px; height: 5px; margin-top: -2px;
+  border-left: 2.5px solid #fff; border-bottom: 2.5px solid #fff;
+  transform: rotate(-45deg); opacity: 0; transition: opacity .12s;
+}
+.consent input:checked + .cbox { background: var(--brand-500); border-color: var(--brand-500); }
+.consent input:checked + .cbox::after { opacity: 1; }
+.consent input:focus-visible + .cbox { box-shadow: 0 0 0 3px rgba(7, 216, 190, .18); }
+
+/* 전체 동의 — 강조 박스 */
+.consent-all {
+  display: flex; align-items: center; gap: 11px; padding: 15px 16px;
+  border: 1.5px solid var(--border-default); border-radius: var(--radius);
+  cursor: pointer; transition: border-color .15s, background .15s;
+}
+.consent-all:hover { border-color: var(--border-strong); }
+.consent-all.on { border-color: var(--brand-500); background: var(--brand-50); }
+.consent-all-text { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+
+/* 개별 항목 */
+.consent-list { margin-top: 6px; }
+.consent-item { display: flex; align-items: center; }
+.consent-check {
+  flex: 1 1 auto; display: flex; align-items: center; gap: 10px;
+  padding: 11px 12px; cursor: pointer; border-radius: 10px; transition: background .12s;
+}
+.consent-check:hover { background: #F8F9FA; }
+.ctag { flex: 0 0 auto; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 6px; letter-spacing: -0.2px; }
+.req-tag { color: var(--error); background: #FFF0F3; }
+.opt-tag { color: var(--text-secondary); background: #F1F3F5; }
+.ctext { flex: 1 1 auto; font-size: 14px; font-weight: 500; color: var(--text-primary); }
+.cview {
+  flex: 0 0 auto; font-size: 13px; color: var(--text-tertiary);
+  text-decoration: none; padding: 8px 10px; white-space: nowrap;
+}
+.cview::after { content: "›"; margin-left: 3px; font-size: 15px; }
+.cview:hover { color: var(--brand-600); }
+
+/* 좁은 화면: 동의 항목이 한 줄에 들어가도록 여백·글자 살짝 축소 */
+@media (max-width: 420px) {
+  .consent-check { padding: 11px 6px; gap: 8px; }
+  .ctext { font-size: 13.5px; }
+  .ctag { padding: 2px 6px; }
+  .cview { padding: 8px 4px; font-size: 12px; }
+}

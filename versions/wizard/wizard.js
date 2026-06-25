@@ -77,6 +77,9 @@ function getData() {
   // disabled 상태의 phone 값 보강
   if (phone && (!d["전화번호"] || !String(d["전화번호"]).trim())) d["전화번호"] = phone.value;
   d["PASS인증여부"] = passVerified ? "TRUE" : "FALSE";
+  d["개인정보동의"]   = document.getElementById("agree-privacy").checked ? "TRUE" : "FALSE";
+  d["약관동의"]       = document.getElementById("agree-terms").checked ? "TRUE" : "FALSE";
+  d["마케팅수신동의"] = document.getElementById("agree-marketing").checked ? "TRUE" : "FALSE";
   return d;
 }
 
@@ -98,6 +101,8 @@ function validateStep(step) {
     if (!PHONE_RE.test(val("phone")) && !passVerified) return "올바른 휴대폰 번호를 입력해 주세요.";
     if (!passVerified) return "PASS 본인인증을 완료해 주세요.";
     if (!EMAIL_RE.test(val("email").trim())) return "올바른 이메일 주소를 입력해 주세요.";
+    if (!document.getElementById("agree-privacy").checked) return "[필수] 개인정보 수집·이용에 동의해 주세요.";
+    if (!document.getElementById("agree-terms").checked)   return "[필수] 이용약관에 동의해 주세요.";
     return null;
   }
   return null;
@@ -196,3 +201,20 @@ function showResult(position) {
   }
   window.scrollTo(0, 0);
 }
+
+// ── 약관 동의: 전체동의 ↔ 개별 항목 동기화 ──
+var agreeAll      = document.getElementById("agree-all");
+var consentAllBox = document.getElementById("consent-all-box");
+var agreeItems    = Array.prototype.slice.call(document.querySelectorAll(".agree-required"))
+  .concat([document.getElementById("agree-marketing")]);
+
+function syncConsentAll() {
+  var allOn = agreeItems.every(function (c) { return c.checked; });
+  agreeAll.checked = allOn;
+  consentAllBox.classList.toggle("on", allOn);
+}
+agreeAll.addEventListener("change", function () {
+  agreeItems.forEach(function (c) { c.checked = agreeAll.checked; });
+  consentAllBox.classList.toggle("on", agreeAll.checked);
+});
+agreeItems.forEach(function (c) { c.addEventListener("change", syncConsentAll); });

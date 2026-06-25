@@ -202,6 +202,44 @@
             <label>이메일 <span class="req">*</span></label>
             <input type="email" name="이메일" id="email" placeholder="example@email.com" />
           </div>
+
+          <!-- 약관 동의 -->
+          <div class="consent">
+            <label class="consent-all" id="consent-all-box">
+              <input type="checkbox" id="agree-all" />
+              <span class="cbox"></span>
+              <span class="consent-all-text">전체 동의합니다</span>
+            </label>
+            <div class="consent-list">
+              <div class="consent-item">
+                <label class="consent-check">
+                  <input type="checkbox" class="agree-required" id="agree-privacy" />
+                  <span class="cbox"></span>
+                  <span class="ctag req-tag">필수</span>
+                  <span class="ctext">개인정보 수집·이용 동의</span>
+                </label>
+                <a href="../shared/privacy.html" target="_blank" rel="noopener" class="cview">자세히</a>
+              </div>
+              <div class="consent-item">
+                <label class="consent-check">
+                  <input type="checkbox" class="agree-required" id="agree-terms" />
+                  <span class="cbox"></span>
+                  <span class="ctag req-tag">필수</span>
+                  <span class="ctext">이용약관 동의</span>
+                </label>
+                <a href="../shared/terms.html" target="_blank" rel="noopener" class="cview">자세히</a>
+              </div>
+              <div class="consent-item">
+                <label class="consent-check">
+                  <input type="checkbox" id="agree-marketing" />
+                  <span class="cbox"></span>
+                  <span class="ctag opt-tag">선택</span>
+                  <span class="ctext">마케팅·이벤트 정보 수신</span>
+                </label>
+                <a href="../shared/privacy.html" target="_blank" rel="noopener" class="cview">자세히</a>
+              </div>
+            </div>
+          </div>
         </section>
 
         <div class="nav-btns">
