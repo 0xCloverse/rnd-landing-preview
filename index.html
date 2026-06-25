@@ -1,131 +1,15 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RnD — 석사 이상 고학력자 소개팅 · 사전가입</title>
-  <meta name="description" content="석사 이상 고학력자를 위한 소개팅, RnD. 사전가입하고 출시 소식을 가장 먼저 받아보세요." />
-
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <title>RnD 사전신청</title>
+  <meta http-equiv="refresh" content="0; url=versions/wizard/index.html" />
+  <link rel="canonical" href="versions/wizard/index.html" />
 </head>
-<body>
-  <div id="form-wrap">
-    <!-- 히어로 (문구는 자유롭게 조정 가능) -->
-    <header class="hero">
-      <div class="pill">🎓 출시 전 사전가입 모집 중</div>
-      <div class="brand">RnD</div>
-      <h1>대화가 통하는 사람과의<br />깊이 있는 만남</h1>
-      <p>석사 이상 고학력자를 위한 소개팅, 곧 시작합니다.</p>
-    </header>
-
-    <div class="container">
-      <div class="card">
-        <h2>사전가입 신청</h2>
-        <p class="sub">출시 소식과 얼리버드 혜택을 가장 먼저 받아보세요.</p>
-
-        <form id="signup-form" novalidate>
-          <div class="field">
-            <label>이름 <span class="req">*</span></label>
-            <input type="text" name="이름" placeholder="예) 김알앤디" />
-          </div>
-
-          <div class="field">
-            <label>학력단계 <span class="req">*</span></label>
-            <select name="학력단계" id="edu-level">
-              <option value="">선택하세요</option>
-              <option value="석사재학">석사 재학</option>
-              <option value="석사졸업">석사 졸업</option>
-              <option value="박사재학">박사 재학</option>
-              <option value="박사졸업">박사 졸업</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label>학부 대학교 <span class="req">*</span></label>
-            <input type="text" name="학부_대학교" placeholder="예) ○○대학교" />
-          </div>
-          <div class="field">
-            <label>학부 전공 <span class="req">*</span></label>
-            <input type="text" name="학부_전공" placeholder="예) 경제학" />
-          </div>
-          <div class="field">
-            <label>석사 대학교 <span class="req">*</span></label>
-            <input type="text" name="석사_대학교" placeholder="예) ○○대학교" />
-          </div>
-          <div class="field">
-            <label>석사 전공 <span class="req">*</span></label>
-            <input type="text" name="석사_전공" placeholder="예) 경영학" />
-          </div>
-
-          <div id="phd-fields" hidden>
-            <div class="field">
-              <label>박사 대학교 <span class="req">*</span></label>
-              <input type="text" name="박사_대학교" placeholder="예) ○○대학교" />
-            </div>
-            <div class="field">
-              <label>박사 전공 <span class="req">*</span></label>
-              <input type="text" name="박사_전공" placeholder="예) 통계학" />
-            </div>
-          </div>
-
-          <div class="field">
-            <label>이메일 <span class="req">*</span> <span class="note">(재학=학교 / 졸업=직장 이메일)</span></label>
-            <input type="email" name="이메일" placeholder="name@university.ac.kr" />
-          </div>
-
-          <div class="field">
-            <label>전화번호 <span class="req">*</span> <span class="note">(숫자만)</span></label>
-            <input type="text" name="전화번호" id="phone" inputmode="numeric" placeholder="01012345678" />
-          </div>
-
-          <div class="field">
-            <label>성별 <span class="req">*</span></label>
-            <select name="성별">
-              <option value="">선택하세요</option>
-              <option value="남성">남성</option>
-              <option value="여성">여성</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label>키 (cm) <span class="req">*</span></label>
-            <input type="number" name="키" id="height" min="140" max="220" placeholder="175" />
-          </div>
-
-          <div class="field">
-            <label>나를 한 줄로 표현하면? <span class="req">*</span></label>
-            <input type="text" name="한줄소개" id="intro" maxlength="50" placeholder="20자 이상 자유롭게 적어주세요" />
-            <div class="counter" id="intro-counter">0 / 50자 (최소 20자)</div>
-          </div>
-
-          <div class="field">
-            <label>이상형을 한 줄로 표현하면? <span class="req">*</span></label>
-            <input type="text" name="한줄이상형" id="ideal" maxlength="50" placeholder="20자 이상 자유롭게 적어주세요" />
-            <div class="counter" id="ideal-counter">0 / 50자 (최소 20자)</div>
-          </div>
-
-          <button type="submit">사전가입 신청하기</button>
-          <div id="msg"></div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- 제출 완료 화면 -->
-  <div id="thanks">
-    <div class="check">✓</div>
-    <h2>사전가입 신청 감사합니다 🎉</h2>
-    <p>RnD 출시 소식을 가장 먼저 알려드릴게요.</p>
-  </div>
-
-  <footer class="footer">
-    <div>© 2026 RnD</div>
-    <!-- 법적 단계에서 이용약관 · 개인정보 처리방침 링크 추가 예정 -->
-  </footer>
-
-  <script src="script.js"></script>
+<body style="font-family:'Noto Sans KR',sans-serif;text-align:center;padding:48px;color:#333;">
+  <p>RnD 사전신청 페이지로 이동 중입니다…</p>
+  <p><a href="versions/wizard/index.html" style="color:#07D8BE;font-weight:700;">바로 이동하기</a></p>
+  <script>location.replace('versions/wizard/index.html');</script>
 </body>
 </html>
