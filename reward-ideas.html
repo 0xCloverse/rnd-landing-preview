@@ -1,0 +1,614 @@
+<meta charset="utf-8">
+<title>RnD 사전가입 리워드 — 리서치 &amp; 초안 7개</title>
+<style>
+  :root {
+    --paper: #FAFAF7;
+    --raised: #FFFFFF;
+    --sunk: #F2F3F0;
+    --ink: #15201C;
+    --ink-2: #4B5852;
+    --ink-3: #8B958F;
+    --mint: #07D8BE;
+    --mint-ink: #046B5E;
+    --mint-wash: #E8FBF7;
+    --amber: #C2740A;
+    --amber-wash: #FDF5E7;
+    --red: #D93B52;
+    --red-wash: #FDEFF1;
+    --line: #E3E6E2;
+    --line-2: #CDD3CE;
+    --shadow: 0 1px 2px rgba(21,32,28,.04), 0 10px 28px -18px rgba(21,32,28,.28);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #101512; --raised: #171E1A; --sunk: #1C2420;
+      --ink: #E9EFEB; --ink-2: #A5B0AA; --ink-3: #6E7973;
+      --mint: #2FE7CE; --mint-ink: #6FF0DC; --mint-wash: #0E2B27;
+      --amber: #E9AE5A; --amber-wash: #2A2114;
+      --red: #FF7C90; --red-wash: #2E181C;
+      --line: #262E2A; --line-2: #38423C;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 28px -18px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #101512; --raised: #171E1A; --sunk: #1C2420;
+    --ink: #E9EFEB; --ink-2: #A5B0AA; --ink-3: #6E7973;
+    --mint: #2FE7CE; --mint-ink: #6FF0DC; --mint-wash: #0E2B27;
+    --amber: #E9AE5A; --amber-wash: #2A2114;
+    --red: #FF7C90; --red-wash: #2E181C;
+    --line: #262E2A; --line-2: #38423C;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 28px -18px rgba(0,0,0,.7);
+  }
+  :root[data-theme="light"] {
+    --paper: #FAFAF7; --raised: #FFFFFF; --sunk: #F2F3F0;
+    --ink: #15201C; --ink-2: #4B5852; --ink-3: #8B958F;
+    --mint: #07D8BE; --mint-ink: #046B5E; --mint-wash: #E8FBF7;
+    --amber: #C2740A; --amber-wash: #FDF5E7;
+    --red: #D93B52; --red-wash: #FDEFF1;
+    --line: #E3E6E2; --line-2: #CDD3CE;
+    --shadow: 0 1px 2px rgba(21,32,28,.04), 0 10px 28px -18px rgba(21,32,28,.28);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+    line-height: 1.62; -webkit-font-smoothing: antialiased;
+    word-break: keep-all; overflow-wrap: break-word;
+  }
+  .mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-variant-numeric: tabular-nums; }
+  .wrap { max-width: 840px; margin: 0 auto; padding: 56px 22px 120px; }
+
+  /* header */
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11.5px; letter-spacing: .07em;
+    color: var(--mint-ink); background: var(--mint-wash);
+    border: 1px solid color-mix(in srgb, var(--mint) 32%, transparent);
+    padding: 5px 11px 5px 9px; border-radius: 99px; margin-bottom: 22px;
+  }
+  .eyebrow i { width: 6px; height: 6px; border-radius: 50%; background: var(--mint); font-style: normal; }
+  h1 { font-size: 35px; font-weight: 800; letter-spacing: -.02em; line-height: 1.28; margin: 0 0 16px; text-wrap: balance; }
+  .lede { font-size: 16.5px; color: var(--ink-2); max-width: 60ch; margin: 0 0 12px; }
+  .lede b { color: var(--ink); font-weight: 700; }
+
+  .scope {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+    background: var(--line); border: 1px solid var(--line); border-radius: 13px;
+    overflow: hidden; margin: 34px 0 0;
+  }
+  .scope > div { background: var(--raised); padding: 16px 18px; }
+  .scope .n { display: block; font-size: 22px; font-weight: 700; letter-spacing: -.02em; }
+  .scope .l { font-size: 12px; color: var(--ink-3); margin-top: 3px; }
+
+  /* section */
+  h2 {
+    font-size: 13px; font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3);
+    margin: 64px 0 18px; padding-bottom: 12px; border-bottom: 1px solid var(--line);
+  }
+  h3 { font-size: 20px; font-weight: 700; letter-spacing: -.01em; margin: 0 0 10px; }
+  p { margin: 0 0 14px; }
+
+  /* callouts */
+  .alert { border-radius: 14px; padding: 20px 22px; margin: 0 0 20px; border: 1px solid; }
+  .alert h3 { font-size: 16.5px; margin-bottom: 8px; display: flex; gap: 8px; align-items: baseline; }
+  .alert p:last-child { margin-bottom: 0; }
+  .alert p { font-size: 14.5px; }
+  .a-red { background: var(--red-wash); border-color: color-mix(in srgb, var(--red) 38%, transparent); }
+  .a-red h3 { color: var(--red); }
+  .a-amber { background: var(--amber-wash); border-color: color-mix(in srgb, var(--amber) 38%, transparent); }
+  .a-amber h3 { color: var(--amber); }
+  .a-mint { background: var(--mint-wash); border-color: color-mix(in srgb, var(--mint) 38%, transparent); }
+  .a-mint h3 { color: var(--mint-ink); }
+
+  /* verdict */
+  .verdict { display: flex; flex-direction: column; gap: 12px; }
+  .v-row {
+    display: grid; grid-template-columns: 30px 1fr; gap: 14px; align-items: start;
+    background: var(--raised); border: 1px solid var(--line);
+    border-radius: 13px; padding: 17px 19px; box-shadow: var(--shadow);
+  }
+  .v-row .k {
+    font-family: ui-monospace, Menlo, monospace; font-size: 12px; font-weight: 700;
+    color: var(--mint-ink); background: var(--mint-wash); border-radius: 6px;
+    text-align: center; padding: 3px 0; margin-top: 1px;
+  }
+  .v-row b { display: block; font-size: 15.5px; margin-bottom: 3px; }
+  .v-row span { font-size: 14px; color: var(--ink-2); }
+
+  /* option cards */
+  .opt {
+    background: var(--raised); border: 1px solid var(--line); border-radius: 16px;
+    padding: 24px; margin-bottom: 16px; box-shadow: var(--shadow);
+  }
+  .opt.pick { border-color: color-mix(in srgb, var(--mint) 52%, var(--line)); }
+  .opt.avoid { border-color: color-mix(in srgb, var(--red) 34%, var(--line)); background: color-mix(in srgb, var(--red-wash) 45%, var(--raised)); }
+  .opt-top { display: flex; align-items: flex-start; gap: 13px; margin-bottom: 4px; }
+  .tag {
+    flex: 0 0 auto; font-family: ui-monospace, Menlo, monospace; font-size: 12px; font-weight: 700;
+    padding: 4px 8px; border-radius: 7px; background: var(--sunk); color: var(--ink-2); margin-top: 3px;
+  }
+  .opt.pick .tag { background: var(--mint); color: #04302A; }
+  .opt.avoid .tag { background: var(--red); color: #fff; }
+  .badge {
+    display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .02em;
+    padding: 3px 8px; border-radius: 99px; vertical-align: 3px; margin-left: 8px;
+  }
+  .b-pick { background: var(--mint); color: #04302A; }
+  .b-avoid { background: var(--red); color: #fff; }
+  .opt-lede { font-size: 14.5px; color: var(--ink-2); margin: 0 0 18px; }
+
+  .spec { background: var(--sunk); border-radius: 11px; padding: 15px 17px; margin-bottom: 16px; }
+  .spec .sh { font-size: 11.5px; font-weight: 700; letter-spacing: .06em; color: var(--ink-3); text-transform: uppercase; margin-bottom: 9px; font-family: ui-monospace, Menlo, monospace; }
+  .spec ul { margin: 0; padding-left: 18px; font-size: 14px; }
+  .spec li { margin-bottom: 5px; }
+  .spec li:last-child { margin-bottom: 0; }
+  .spec code {
+    font-family: ui-monospace, Menlo, monospace; font-size: 12.5px;
+    background: var(--raised); border: 1px solid var(--line); border-radius: 5px; padding: 1px 5px;
+  }
+
+  .why { font-size: 13.5px; color: var(--ink-2); border-left: 2.5px solid var(--mint); padding: 2px 0 2px 14px; margin: 0 0 16px; }
+  .why b { color: var(--ink); }
+
+  .pros { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; font-size: 13.5px; }
+  .pros > div > div:first-child { font-size: 11.5px; font-weight: 700; letter-spacing: .05em; margin-bottom: 6px; font-family: ui-monospace, Menlo, monospace; }
+  .pros .up > div:first-child { color: var(--mint-ink); }
+  .pros .down > div:first-child { color: var(--amber); }
+  .pros ul { margin: 0; padding-left: 17px; color: var(--ink-2); }
+  .pros li { margin-bottom: 4px; }
+
+  /* table */
+  .tbl-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; margin-bottom: 18px; background: var(--raised); }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 420px; }
+  th, td { text-align: left; padding: 11px 15px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { background: var(--sunk); font-size: 11.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); font-family: ui-monospace, Menlo, monospace; font-weight: 700; white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+  td.num { font-family: ui-monospace, Menlo, monospace; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  /* evidence details */
+  details.ev { background: var(--raised); border: 1px solid var(--line); border-radius: 13px; margin-bottom: 11px; box-shadow: var(--shadow); }
+  details.ev summary { list-style: none; cursor: pointer; padding: 15px 19px; display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 15px; }
+  details.ev summary::-webkit-details-marker { display: none; }
+  details.ev summary .ch { margin-left: auto; color: var(--ink-3); transition: transform .18s; flex: 0 0 auto; }
+  details.ev[open] summary .ch { transform: rotate(180deg); }
+  .ev-body { padding: 4px 19px 19px; border-top: 1px solid var(--line); padding-top: 15px; font-size: 14px; color: var(--ink-2); }
+  .ev-body b { color: var(--ink); }
+  .ev-body ul { padding-left: 18px; margin: 0 0 12px; }
+  .ev-body li { margin-bottom: 7px; }
+  .ev-body p:last-child, .ev-body ul:last-child { margin-bottom: 0; }
+  .src { font-size: 12px; color: var(--ink-3); }
+
+  a { color: var(--mint-ink); }
+  .foot { margin-top: 44px; padding: 20px 22px; background: var(--raised); border: 1px solid var(--line); border-radius: 13px; font-size: 13.5px; color: var(--ink-2); }
+  .foot b { color: var(--ink); }
+
+  @media (max-width: 620px) {
+    .wrap { padding: 38px 15px 90px; }
+    h1 { font-size: 27px; }
+    .scope { grid-template-columns: 1fr; }
+    .pros { grid-template-columns: 1fr; }
+    .opt { padding: 19px 16px; }
+  }
+</style>
+
+<div class="wrap">
+
+  <span class="eyebrow"><i></i>RnD · 사전가입 리워드 리서치</span>
+  <h1>사전가입자에게<br>무엇을 줘야 할까</h1>
+  <p class="lede">국내 소개팅앱 사례, 해외 선별형 앱, 웨이팅리스트 성장 공식, 한국 사전예약 관습, 법·세무까지 다섯 방향으로 나눠 조사했어요. 결론과 <b>실행 가능한 초안 7개</b>로 정리했습니다.</p>
+
+  <div class="scope">
+    <div><span class="n mono">5</span><span class="l">조사 방향</span></div>
+    <div><span class="n mono">7</span><span class="l">리워드 초안</span></div>
+    <div><span class="n mono">1</span><span class="l">지금 당장 고칠 것</span></div>
+  </div>
+
+  <h2>먼저 · 지금 랜딩에서 고쳐야 할 것</h2>
+
+  <div class="alert a-red">
+    <h3>⚠️ "사전가입 80 / 100명 마감" 표기</h3>
+    <p>2025년 4월 공정거래위원회가 <b>에듀윌·에스티유니타스에 과징금 총 3억 1,000만원</b>을 부과했어요. 위반 내용이 <b>"마감임박, 0/00 혜택이 마감됩니다"</b> 같은 문구를 쓰면서 마감일이 지나도 숫자만 바꿔 반복 광고한 것이었습니다.</p>
+    <p>판단 기준은 단순해요. <b>100명이 차면 실제로 사전가입을 닫는다면 문제없고, 101번째를 계속 받거나 80이 실제 신청자 수가 아니면 위 사례와 구조가 같습니다.</b> RnD는 "정직한 검증"을 파는 브랜드라 여기서 숫자를 만들면 브랜드 명제 자체가 무너져요.</p>
+    <p><b>대안:</b> 숫자를 마케팅 장치가 아니라 <b>실제 심사 처리 용량</b>에 묶으세요. "학위 서류를 사람이 직접 확인합니다. 1기는 검증 가능한 100명까지만 받습니다"는 <b>사실이면서 동시에 더 강한 희소성 서사</b>가 됩니다.</p>
+  </div>
+
+  <h2>조사 결론 · 세 줄</h2>
+
+  <div class="verdict">
+    <div class="v-row">
+      <div class="k mono">01</div>
+      <div>
+        <b>기프티콘·현금은 RnD에서 특히 손해예요</b>
+        <span>커피 기프티콘은 누구나 원하니까 <b>거르는 기능이 0</b>입니다. RnD의 유일한 차별점(석사 이상만 모인 곳)을 스스로 무력화해요. 게다가 데이팅앱은 감성재라, 실용적 보상은 <b>여성에게 특히 약하게</b> 작동한다는 연구가 있습니다.</span>
+      </div>
+    </div>
+    <div class="v-row">
+      <div class="k mono">02</div>
+      <div>
+        <b>같은 카테고리 신생 앱들은 전부 "진입 비용 면제"를 씁니다</b>
+        <span>폴잇은 이벤트 기간 <b>가입비 면제</b>, 웨딩토크는 <b>무료 소개팅</b>, 북블라는 <b>1기 완전 무료</b>로 4주에 935명을 모았어요. 재화를 뿌린 게 아니라 원래 받을 돈을 안 받았습니다.</span>
+      </div>
+    </div>
+    <div class="v-row">
+      <div class="k mono">03</div>
+      <div>
+        <b>리워드보다 출시 일정이 더 큰 변수예요</b>
+        <span>사전신청자를 <b>1개월 안에</b> 초대하면 평균 50%가 전환되지만, <b>3개월을 넘기면 20% 미만</b>으로 떨어집니다. 업계 표현으로 "waitlists rot"(대기자 명단은 썩는다). 리워드를 아무리 잘 짜도 이걸 못 이겨요.</span>
+      </div>
+    </div>
+  </div>
+
+  <h2>초안 7개</h2>
+
+  <!-- A -->
+  <div class="opt pick">
+    <div class="opt-top">
+      <span class="tag mono">A</span>
+      <div>
+        <h3>1기 무료 이용권<span class="badge b-pick">추천</span></h3>
+        <p class="opt-lede">재화를 주는 대신, 원래 돈 내야 하는 것을 안 받는 방식.</p>
+      </div>
+    </div>
+    <div class="spec">
+      <div class="sh">구성</div>
+      <ul>
+        <li>사전신청 + 학력 인증을 마친 전원에게 <b>정식 오픈 시 프리미엄 이용권 30일</b></li>
+        <li>표기는 "할인"이 아니라 <code>1기 회원 혜택</code> 으로</li>
+      </ul>
+    </div>
+    <p class="why"><b>근거 ·</b> 국내 소개팅앱 1개월 이용권 시세는 <b>약 14,000원</b>(정오의데이트 좋아요 1개월권 ₩14,000, 위피패스 7일권 ₩14,900). 즉 "1만 4천원 상당"이라고 말할 수 있는 <b>실제 가격 근거가 있는</b> 리워드예요. 폴잇·웨딩토크·북블라 3사가 모두 택한 형태이기도 합니다.</p>
+    <div class="pros">
+      <div class="up">
+        <div>장점</div>
+        <ul>
+          <li>앱을 안 쓰는 사람에겐 가치가 0이라 <b>체리피커가 자동으로 걸러짐</b></li>
+          <li>미사용분은 <b>실제 지출 0원</b> (월 100만원 예산에 맞음)</li>
+          <li>가격 자체를 깎지 않아서 프리미엄 포지셔닝이 안 무너짐</li>
+        </ul>
+      </div>
+      <div class="down">
+        <div>주의</div>
+        <ul>
+          <li>30일 끝나는 시점에 <b>이탈 절벽</b>이 생김 → 종료 1주 전 안내 필요</li>
+          <li>오픈이 늦어지면 리워드 체감 가치가 같이 증발</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- B -->
+  <div class="opt pick">
+    <div class="opt-top">
+      <span class="tag mono">B</span>
+      <div>
+        <h3>창립 멤버 배지<span class="badge b-pick">추천</span></h3>
+        <p class="opt-lede">돈이 아니라 지위를 주는 방식. 원가 0원.</p>
+      </div>
+    </div>
+    <div class="spec">
+      <div class="sh">구성</div>
+      <ul>
+        <li>프로필에 <b>영구 노출되는 1기 배지</b> + 회원번호 <code>#001 ~ #100</code></li>
+        <li>학력 서류 <b>우선 심사</b> (일반 대기열보다 먼저)</li>
+        <li>오픈 첫 주 <b>소개 목록 상단 노출</b></li>
+      </ul>
+    </div>
+    <p class="why"><b>근거 ·</b> 틴더는 상위 1%에게 <code>SELECT 배지</code>를 주면서 오히려 <b>월 $499를 받습니다</b>. 범블도 우수 이용자 5~10%에게 인증 배지를 주는데 금전 혜택은 0원이에요. 배타성으로 포지셔닝한 앱들은 예외 없이 <b>할인이 아니라 지위</b>를 줬습니다.</p>
+    <div class="pros">
+      <div class="up">
+        <div>장점</div>
+        <ul>
+          <li>원가 0원인데 <b>받은 사람이 자랑</b>함 (할인 쿠폰을 자랑하는 사람은 없음)</li>
+          <li>"먼저 검증받은 사람"이라는 서사가 브랜드와 정확히 일치</li>
+        </ul>
+      </div>
+      <div class="down">
+        <div>주의</div>
+        <ul>
+          <li>지위는 <b>남들이 알아봐야</b> 성립 → 정원을 진짜로 좁혀야 함</li>
+          <li>전원에게 주면 배지가 아니라 기본값이 됨</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- C -->
+  <div class="opt pick">
+    <div class="opt-top">
+      <span class="tag mono">C</span>
+      <div>
+        <h3>목표 달성 언락<span class="badge b-pick">추천</span></h3>
+        <p class="opt-lede">한국인이 게임에서 이미 학습한 포맷. 그런데 우리 쪽이 논리적으로 더 맞아요.</p>
+      </div>
+    </div>
+    <div class="spec">
+      <div class="sh">구성 (숫자는 제안 · 실제 규모에 맞춰 조정 필요)</div>
+      <ul>
+        <li><code>300명</code> 달성 → 전원 이용권 +7일</li>
+        <li><code>1,000명</code> 달성 → 전원 +14일</li>
+        <li><code>3,000명</code> 달성 → 전원 +30일 <span class="src">(하위 단계까지 누적 지급)</span></li>
+        <li>랜딩에 실시간 카운터 + 진행바 노출</li>
+      </ul>
+    </div>
+    <p class="why"><b>근거 ·</b> 한국 게임 사전예약의 표준 문법이에요(신월동행 5만~50만명 6단계, 이환, 가디언테일즈 등). <b>핵심은 이겁니다 —</b> 게임에서 "10만명 모이면 뽑기권"은 사실 인과가 없어요. 그런데 데이팅앱에서는 <b>참여자 수 = 매칭 풀 크기 = 실제 내 이득</b>이라 이 논리가 진짜입니다. 이걸 카피에 그대로 쓰세요.</p>
+    <div class="pros">
+      <div class="up">
+        <div>장점</div>
+        <ul>
+          <li>공유할 <b>이유가 정직하게</b> 생김 (사람이 늘면 내가 이득)</li>
+          <li>한국 사용자에게 설명이 필요 없는 익숙한 형식</li>
+        </ul>
+      </div>
+      <div class="down">
+        <div>주의</div>
+        <ul>
+          <li>게임은 10만 단위라 미달이 안 보이지만 <b>우리 규모에선 목표 미달이 공개된 실패</b>로 읽힘</li>
+          <li>1단계는 <b>거의 확실히 달성 가능한 수</b>로. 상위 단계는 도달 시점에 공개하는 것도 방법</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- D -->
+  <div class="opt">
+    <div class="opt-top">
+      <span class="tag mono">D</span>
+      <div>
+        <h3>초대권 2장</h3>
+        <p class="opt-lede">가장 강력한 사례가 있지만, 지급 시점이 전부를 좌우해요.</p>
+      </div>
+    </div>
+    <div class="spec">
+      <div class="sh">구성</div>
+      <ul>
+        <li><b>학력 인증을 완료한</b> 사람에게만 초대권 2장 <span class="src">(가입 즉시 아님 — 이게 핵심)</span></li>
+        <li>받은 사람은 대기열을 건너뜀</li>
+        <li>문구를 "친구 초대"가 아니라 <b>"싱글인 지인 주선하기"</b>로</li>
+      </ul>
+    </div>
+    <p class="why"><b>근거 ·</b> 영국 은행 몬조는 <b>계좌 개설 후 2주 실제로 써야</b> 골든티켓 1장을 줬는데, 이게 <b>2017년 신규 가입의 40%를 만들었고 비용은 0원</b>이었습니다(창업자 본인 기록). 라야는 승인자의 <b>87%</b>가 추천을 받았거나 연락처에 회원이 있었고요. 즉 초대권은 <b>가입에 주는 게 아니라 행동에 주는</b> 보상이에요.</p>
+    <div class="pros">
+      <div class="up">
+        <div>장점</div>
+        <ul>
+          <li>비용 0원인데 검증된 효과가 가장 큼</li>
+          <li>"주선자" 프레이밍이면 한국 정서상 오히려 긍정적 행위</li>
+        </ul>
+      </div>
+      <div class="down">
+        <div>주의</div>
+        <ul>
+          <li>초대가 동성 위주로 소진되면 <b>성비가 무너짐</b></li>
+          <li>초대 문자를 <b>회사가 발송하면 정보통신망법 위반 소지</b> → 링크 복사 또는 본인 카톡으로만</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- E -->
+  <div class="opt">
+    <div class="opt-top">
+      <span class="tag mono">E</span>
+      <div>
+        <h3>대기열 순번</h3>
+        <p class="opt-lede">우리에겐 정직한 장치예요. 단, 보여주는 방향이 통념과 정반대입니다.</p>
+      </div>
+    </div>
+    <div class="spec">
+      <div class="sh">구성</div>
+      <ul>
+        <li>학력 심사에 실제 시간이 걸리므로 대기열이 <b>억지가 아님</b></li>
+        <li>지인을 초대하면 순번이 앞당겨짐</li>
+        <li>⚠️ <b>"당신은 247번" 표시 금지 → "당신 뒤에 N명이 기다립니다"로</b></li>
+      </ul>
+    </div>
+    <p class="why"><b>근거 ·</b> 하버드 경영대학원 뷰엘 교수 연구(현장관찰 9,440건 + 온라인 실험 4건)에 따르면, 대기열 <b>맨 뒤</b>인 사람은 이탈 확률이 <b>3.1배</b>로 뜁니다. 반대로 <b>내 뒤에 누가 있는 게 보이면 이탈이 절반</b>으로 줄어요. 전체 시스템에서 아무도 자기가 꼴찌라고 느끼지 않게 하자 <b>이탈 43.5% 감소, 처리 인원 12.5% 증가</b>했습니다. 토스뱅크는 경품 없이 순번과 "공유하면 당겨짐"만으로 <b>대기자 100만명</b>을 모았고요.</p>
+    <div class="pros">
+      <div class="up">
+        <div>장점</div>
+        <ul>
+          <li>경품 없이 작동하고, 심사 시간이라는 <b>진짜 이유</b>가 있음</li>
+        </ul>
+      </div>
+      <div class="down">
+        <div>주의</div>
+        <ul>
+          <li><b>초기엔 뒤가 비어 있으니 순번 UI를 켜지 말 것</b> (역효과)</li>
+          <li>뒤 숫자가 충분히 쌓인 뒤에 켜세요</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- F -->
+  <div class="opt pick">
+    <div class="opt-top">
+      <span class="tag mono">F</span>
+      <div>
+        <h3>지역별 오픈 잠금해제<span class="badge b-pick">추천</span></h3>
+        <p class="opt-lede">C의 강화판. 리워드를 주는 게 아니라 <b>서비스 자체를 여는</b> 조건으로 쓰는 방식.</p>
+      </div>
+    </div>
+    <div class="spec">
+      <div class="sh">구성</div>
+      <ul>
+        <li><code>서울에 300명</code> 모이면 서울부터 먼저 오픈, 그다음 경기 → 지방 순</li>
+        <li>랜딩에 <b>지역별 현황</b> 표시 ("서울 182명 · 오픈까지 118명")</li>
+        <li>내 지역을 열려면 내가 같은 지역 지인을 데려와야 함</li>
+      </ul>
+    </div>
+    <p class="why"><b>근거 ·</b> 커피밋베이글은 <b>한 도시에 신청이 1,000명 모여야 그 도시를 오픈</b>하는 방식으로 뉴욕 → 보스턴 → 샌프란시스코를 열었어요. 브리즈(네덜란드)는 제휴 식당을 확보한 도시만 열고, 힌지는 페이스북 친구 밀도가 있어야 작동해서 워싱턴DC부터 시작했습니다. <b>세 앱 모두 희소성이 진짜였어요</b> — 마케팅이 아니라 서비스가 실제로 작동하려면 필요한 조건이었습니다.</p>
+    <p class="why" style="border-color:var(--amber)"><b>RnD에 특히 중요한 이유 ·</b> 석사 이상은 모수가 얇아요. 전국에 300명이 흩어져 있으면 <b>내 지역엔 소개할 사람이 없습니다.</b> 그러면 인증까지 다 하고 들어온 사람이 빈 화면을 보게 되고, 이게 인증형 앱들이 이용자를 잃은 바로 그 이유예요.</p>
+    <div class="pros">
+      <div class="up">
+        <div>장점</div>
+        <ul>
+          <li>희소성이 <b>100% 사실</b>이라 공정위 리스크가 없음</li>
+          <li>초대할 이유가 가장 강함 (내 지역을 열려면 필요)</li>
+          <li>오픈 첫날 <b>빈 화면 문제</b>를 구조적으로 방지</li>
+        </ul>
+      </div>
+      <div class="down">
+        <div>주의</div>
+        <ul>
+          <li>지방은 오래 안 열릴 수 있음 → 대기자에게 진행 상황을 계속 알려야 함</li>
+          <li>기준 인원을 너무 높게 잡으면 아무 데도 안 열림</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- G -->
+  <div class="opt avoid">
+    <div class="opt-top">
+      <span class="tag mono">G</span>
+      <div>
+        <h3>기프티콘 · 추첨 경품<span class="badge b-avoid">비추천</span></h3>
+        <p class="opt-lede">한국에서 가장 흔한 방식이지만, RnD에서는 역효과예요.</p>
+      </div>
+    </div>
+    <p class="why"><b>근거 넷 ·</b> ① 커피 기프티콘은 <b>누구나 원하니 필터 기능이 0</b>. 앱테크·체리피커가 붙는데, 학력 인증 데이팅앱은 유저의 질이 곧 상품이라 이게 독입니다. ② 그루폰 연구에서 할인으로 온 고객은 <b>재방문 20%</b>에 그쳤고 리뷰 평점도 10% 낮았어요. ③ 금전 보상은 "돈 받으려고 추천한다"는 <b>사회적 비용</b> 때문에 추천 생성·수락을 모두 낮춘다는 연구가 있습니다. ④ 보상은 제품 성격과 맞아야 하는데, 데이팅은 감성재라 <b>실용적 보상은 여성에게 특히 약하게</b> 작동해요.</p>
+    <div class="spec">
+      <div class="sh">그래도 한다면</div>
+      <ul>
+        <li>20대 이상은 <b>고액·저확률보다 소액·고확률</b>을 선호(조사 표본 1,496명) → 아이패드 1대 추첨은 지양</li>
+        <li><b>건별 5만원 이하</b>로 설계하면 세금 0원 + 주민번호 수집 불필요 <span class="src">(소득세법 과세최저한)</span></li>
+        <li>SNS 공개 공유 강제는 절대 금지 — 기피 요소 상위이고, 데이팅앱은 실명 노출 리스크가 훨씬 큼</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>추천 조합</h2>
+
+  <div class="alert a-mint">
+    <h3>A + B + F를 하나로 묶기</h3>
+    <p style="margin-bottom:14px">셋 다 <b>실제 현금 지출이 0에 가깝고</b>, 서로 충돌하지 않아요. 특히 F는 희소성이 사실이라 법적 리스크도 없습니다.</p>
+    <div class="spec" style="background:var(--raised); margin-bottom:0">
+      <div class="sh">사전신청 화면 문구 예시</div>
+      <ul>
+        <li><b>지금 신청하면</b> — 1기 창립 멤버 배지 + 오픈 시 프리미엄 30일 + 학력 심사 우선 처리 <span class="src">(A·B)</span></li>
+        <li><b>내 지역이 열리려면</b> — 서울 182명 / 오픈까지 118명 <span class="src">(F)</span></li>
+        <li><b>인증을 마치면</b> — 같은 지역 지인 초대권 2장 <span class="src">(D)</span></li>
+        <li>정원은 <b>실제 심사 가능 인원</b>이라고 명시 <span class="src">(맨 위 경고 참고)</span></li>
+      </ul>
+    </div>
+  </div>
+  <p style="font-size:14px; color:var(--ink-2)">C(전체 인원 달성 언락)와 F(지역별 언락) 중에서는 <b>F를 권합니다.</b> 같은 게임식 문법인데 F는 숫자가 실제 서비스 조건이라 거짓이 될 수가 없고, 초대 동기도 훨씬 구체적이에요.</p>
+
+  <h2>근거 데이터</h2>
+
+  <details class="ev">
+    <summary>가격 앵커 · "얼마짜리"라고 말할 수 있는 숫자
+      <svg class="ch" width="17" height="17" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </summary>
+    <div class="ev-body">
+      <p>전부 한국 App Store 인앱결제 목록에서 직접 확인한 값이에요.</p>
+      <div class="tbl-scroll">
+        <table>
+          <tr><th>항목</th><th>가격</th><th>비고</th></tr>
+          <tr><td>정오의데이트 좋아요 1개월권</td><td class="num">₩14,000</td><td>1개월 이용권의 표준</td></tr>
+          <tr><td>위피패스 7일권</td><td class="num">₩14,900</td><td>젤리 35개 포함</td></tr>
+          <tr><td>인증형 앱 재화 단가</td><td class="num">250~460원</td><td>스카이피플·블릿·골드스푼</td></tr>
+          <tr><td>대중형 앱 재화 단가</td><td class="num">100~260원</td><td>정오의데이트·아만다</td></tr>
+          <tr><td>한국 "전원 지급" 표준 단위</td><td class="num">약 5,000원</td><td>스타벅스 아메리카노 기프티콘</td></tr>
+          <tr><td>커머스 첫 구매 쿠폰 조각</td><td class="num">5,000~10,000원</td><td>컬리·무신사</td></tr>
+        </table>
+      </div>
+      <p><b>인증형이 대중형보다 재화 단가가 약 2배 비쌉니다.</b> RnD는 석사 이상 타깃이라 <b>개당 300~400원대</b>가 자연스러운 앵커예요.</p>
+    </div>
+  </details>
+
+  <details class="ev">
+    <summary>전환율 · 사전신청자 중 실제로 몇 명이 오는가
+      <svg class="ch" width="17" height="17" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </summary>
+    <div class="ev-body">
+      <ul>
+        <li><b>무료 가입 전환</b> 25~85%. <b>1개월 내 초대 시 평균 50%, 3개월 초과 시 20% 미만</b></li>
+        <li><b>유료 전환</b> 5~25%. 1개월 내 평균 20%, 3개월 초과 시 10% 미만</li>
+        <li><b>실물 상품</b> 5% 미만</li>
+        <li>한국 게임 사전예약 기준 <b>사전예약자의 5~20%</b>가 실제 출시 때 유입</li>
+      </ul>
+      <p>클럽하우스는 대기자 <b>1,000만명</b>을 모았지만 개방 후 대부분 전환에 실패했고, 6개월 만에 활성 이용자가 60% 넘게 빠졌어요. <b>대기자 수는 그 자체로 아무것도 보장하지 않습니다.</b></p>
+    </div>
+  </details>
+
+  <details class="ev">
+    <summary>⚠️ 인증형 데이팅앱의 경고 신호
+      <svg class="ch" width="17" height="17" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </summary>
+    <div class="ev-body">
+      <p>2022년 12월 기준 월간 이용자 수가 전년 대비 <b>일제히 급감</b>했어요.</p>
+      <div class="tbl-scroll">
+        <table>
+          <tr><th>앱</th><th>월간 이용자</th><th>전년 대비</th></tr>
+          <tr><td>글램</td><td class="num">149,167</td><td class="num">-24.1%</td></tr>
+          <tr><td>아만다</td><td class="num">38,249</td><td class="num">-38.3%</td></tr>
+          <tr><td>스카이피플</td><td class="num">25,247</td><td class="num">-27.3%</td></tr>
+          <tr><td>다이아매치</td><td class="num">2,548</td><td class="num">-45.4%</td></tr>
+        </table>
+      </div>
+      <p>당시 이용자 반응이 <b>"직장·학교·외모까지 인증하면서 이용할 필요성을 못 느낀다"</b>였습니다. 인증 배타성은 초기 유인은 되지만, <b>인증 마찰 대비 얻는 게 명확하지 않으면 곧바로 이탈</b>해요. 리워드보다 "인증했더니 실제로 이런 사람들이 있다"는 증거를 랜딩에서 보여주는 게 우선입니다.</p>
+    </div>
+  </details>
+
+  <details class="ev">
+    <summary>초기 회원 특전은 생각보다 드물다
+      <svg class="ch" width="17" height="17" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </summary>
+    <div class="ev-body">
+      <p>범블·힌지·커피밋베이글·필드의 초창기를 확인해봤는데, <b>"초기 가입자 특전"을 준 사례가 사실상 없었어요.</b> 이유가 재밌습니다 — 넷 다 <b>출시 1~5년 뒤에야 유료 상품을 만들었기 때문에</b> 공짜로 줄 프리미엄 자체가 없었어요.</p>
+      <p>대신 이들이 실제로 한 것은 <b>오프라인 밀도 만들기</b>였습니다. 범블 창업자는 대학 여학생회 저녁 자리 테이블에 올라가 <b>앱을 받으면 쿠키를, 받고 친구에게 문자까지 보내면 속옷을</b> 나눠줬어요. 힌지는 워싱턴DC 한 도시에서만 시작했고요.</p>
+      <p>참고로 <b>목요일에만 열리는 앱 "Thursday"는 2025년 1월 서비스를 접었습니다</b>(이용자 관심 급감). 기믹만으로는 오래 못 간다는 사례로 봐둘 만해요.</p>
+    </div>
+  </details>
+
+  <details class="ev">
+    <summary>선별형 앱은 할인을 쓰지 않는다
+      <svg class="ch" width="17" height="17" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </summary>
+    <div class="ev-body">
+      <ul>
+        <li><b>라야</b> — 무료 등급 자체가 없음</li>
+        <li><b>더 리그</b> — 새치기 방법이 추천 아니면 결제. 할인이 아니라 <b>행동</b>을 요구</li>
+        <li><b>틴더 셀렉트</b> — 초대받은 1%에게 <b>월 $499를 받음</b>. 깎아주지 않음</li>
+        <li><b>슈퍼휴먼</b> — 대기자 45만명 상태에서도 월 $30 유지</li>
+      </ul>
+      <p>할인은 "가격이 원래 그만한 가치가 없었다"는 자백에 가까워요. 경제적 혜택을 꼭 줘야 한다면 <b>"할인"이 아니라 "1기 가격 영구 고정"</b>으로 표현하세요. 깎아주는 게 아니라 <b>인상으로부터 보호</b>해주는 프레이밍입니다.</p>
+    </div>
+  </details>
+
+  <h2>법적 체크리스트</h2>
+
+  <div class="alert a-amber">
+    <h3>🔴 결혼중개업법 — 가장 큰 리스크</h3>
+    <p><b>2026년 5월, 성평등가족부가 결혼중개업 실태조사에 처음으로 데이팅앱을 포함시켰습니다.</b> 미신고 데이팅앱 운영자를 면접조사하고 제도개선·법개정 필요성을 검토 중이에요. 미신고 국내결혼중개업은 <b>3년 이하 징역 또는 3천만원 이하 벌금</b>입니다.</p>
+    <p>성립 요건은 <b>①금품을 받고 ②결혼을 위한 상담·알선</b>. 무료 사전신청 단계는 ①이 없어 해당 없지만, <b>유료화하는 순간이 분기점</b>이에요. 마케팅 문구에서 "결혼·혼인·배우자·성혼"은 피하고 "진지한 만남" 수준을 유지하세요. <b>유료화 전에 국민신문고 서면 질의로 유권해석을 받아두시길 권합니다.</b></p>
+  </div>
+
+  <details class="ev">
+    <summary>나머지 법·세무 정리 (경품 상한 / 세금 / 추첨 / 초대 / 개인정보)
+      <svg class="ch" width="17" height="17" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </summary>
+    <div class="ev-body">
+      <ul>
+        <li><b>경품 가액 상한 — 없음.</b> 경품고시는 2016년 7월 폐지됐어요. 실무 위험은 금액이 아니라 <b>고지한 대로 실제 지급했는지</b>입니다.</li>
+        <li><b>세금 — 건별 5만원이 마법의 숫자.</b> 5만원 이하는 과세최저한이라 세금 0원이고 주민번호 수집도 불필요해요. 초과하면 <b>전액에 22%</b>가 붙습니다(추첨 경품은 필요경비 인정 안 됨). 5만 1천원이면 11,220원.</li>
+        <li><b>추첨 — 무료 응모면 사행성 아님.</b> 사행행위는 "참가자로부터 재물을 모을 것"이 요건이라 무료 응모는 해당 없어요. 단 추첨 방식·일정·당첨자 수를 사전 공지하고 그대로 실행해야 합니다.</li>
+        <li><b>친구 초대 — 1단계면 다단계 아님.</b> 방문판매법상 다단계는 <b>3단계 이상</b>이 요건이에요. 친구의 친구까지 보상이 흐르면 재검토 필요.</li>
+        <li><b>⚠️ 초대 문자를 회사가 보내면 위반 소지.</b> 사전동의 없는 사람에게 회사 명의로 발송하면 정보통신망법 제50조 위반(과태료 3천만원 이하). <b>링크 복사 또는 본인 단말 발송</b>으로 설계하고, 대상자 연락처를 서버에 저장하지 마세요.</li>
+        <li><b>⚠️ 성별로 금액이 다른 리워드는 위험.</b> 2025년 9월 인권위는 목욕탕이 성별에 따라 수건값을 다르게 받은 것을 <b>평등권 침해 차별</b>로 판단했어요. 범블은 미국에서 유사 쟁점으로 <b>약 $326만 합의</b>. 성비 조절이 필요하면 성별을 고정하지 말고 <b>실시간 성비에 연동되는 중립 규칙</b>으로 설계하세요.</li>
+        <li><b>개인정보</b> — 주소·주민번호를 전원에게 받으면 안 됩니다(최소수집 원칙). 5만원 이하로 설계하면 이 문제가 통째로 사라져요.</li>
+        <li><b>리워드 안내 메시지</b>는 순수 안내만 담으면 광고가 아니지만, 출시 홍보 문구를 섞는 순간 광고가 되어 (광고) 표기와 옵트인 대상이 됩니다.</li>
+      </ul>
+      <p class="src">※ 법률 자문이 아니에요. 특히 결혼중개업 해당 여부는 현재 정부가 규제 공백을 인지하고 정비를 검토 중인 미확정 영역이라, 유료화 전 변호사 검토가 필요합니다.</p>
+    </div>
+  </details>
+
+  <div class="foot">
+    <b>조사 방법 ·</b> 다섯 방향(국내 소개팅앱 사례 / 해외 선별형 앱 / 웨이팅리스트 성장 공식 / 한국 사전예약 관습 / 법·세무)으로 나눠 병렬 조사했어요. 가격은 한국 App Store 인앱결제 목록에서 직접 확인했고, 법령은 원문을 교차 확인했습니다. 다만 일부 국내 앱의 초대 보상 수치는 제휴 블로그가 출처라 정확도가 낮을 수 있어요. <b>본문의 티어 숫자(300/1,000/3,000명)는 검증된 값이 아니라 제 제안</b>이니 실제 목표 규모에 맞춰 조정해주세요.
+  </div>
+
+</div>
