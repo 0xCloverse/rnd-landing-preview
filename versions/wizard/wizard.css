@@ -148,27 +148,6 @@
 }
 .nextstep b { color: var(--text-primary); }
 
-/* PASS 인증 버튼 */
-.btn-pass {
-  flex: 0 0 auto;
-  padding: 0 18px;
-  height: 48px;
-  background: #5D20D0;
-  color: #fff;
-  border: none;
-  border-radius: var(--radius-md);
-  font-size: 14px;
-  font-weight: 700;
-  font-family: inherit;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background .15s, opacity .15s;
-  letter-spacing: -0.2px;
-}
-.btn-pass:hover:not(:disabled) { background: #4A19A8; }
-.btn-pass:disabled { opacity: 0.7; cursor: not-allowed; }
-.btn-pass.done { background: var(--brand-500); }
-
 /* ─────────── 랜딩 내용 섹션(편집형, 박스/이모지 없이) ─────────── */
 .wrap { max-width: 680px; margin: 0 auto; padding: 0 20px; }
 
@@ -176,6 +155,30 @@
 .sec-eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 1px; color: var(--brand-600); margin-bottom: 14px; }
 .block-h { font-size: 26px; font-weight: 700; line-height: 1.38; letter-spacing: -0.8px; margin: 0 0 16px; }
 .block-p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; margin: 0; }
+
+/* 주요 기능 — 앱 화면 + 설명(박스 X, 얇은 구분선) */
+.feature-list { list-style: none; padding: 0; margin: 8px 0 0; }
+.feature {
+  display: flex; align-items: center; gap: 34px;
+  padding: 38px 0; border-top: 1px solid var(--border-default);
+}
+.feature:first-child { border-top: none; padding-top: 12px; }
+.feature-shot { flex: 0 0 208px; }
+.feature-shot img {
+  display: block; width: 100%; height: auto;
+  border-radius: 26px;
+  border: 6px solid #2B3038;                 /* 기기 베젤 — 흰 배경과 확실히 구분 */
+  background: #2B3038;
+  box-shadow: 0 16px 36px rgba(16, 24, 40, .16), 0 3px 8px rgba(16, 24, 40, .08);
+}
+.feature-body b { display: block; font-size: 19px; margin-bottom: 8px; letter-spacing: -0.4px; }
+.feature-body p { font-size: 15px; color: var(--text-secondary); line-height: 1.75; margin: 0; }
+.feature-note { font-size: 11px; color: var(--text-tertiary); line-height: 1.6; margin: 22px 0 0; opacity: .85; }
+
+@media (max-width: 600px) {
+  .feature { flex-direction: column; align-items: stretch; gap: 22px; padding: 34px 0; }
+  .feature-shot { flex: none; width: 100%; max-width: 240px; margin: 0 auto; }
+}
 
 /* 검증 절차 — 넘버드 리스트(박스 X, 얇은 구분선) */
 .num-list { list-style: none; padding: 0; margin: 6px 0 0; }

@@ -1,5 +1,5 @@
 // RnD 버전 3 — 자격 확인 위저드 로직 (3단계: 기본정보 / 학위+지역 / 연락처)
-// 전화번호 인증: PASS 데모 (실제 구현 시 PASS API 콜백으로 교체)
+// 전화번호는 형식 검증만 하며 별도 본인인증 절차는 없습니다.
 
 var API_URL = "https://script.google.com/macros/s/AKfycby8VjhtUbWPrgBvBrQzjS3S737EeaTmluDp9dl-n9cxWo9bCAMIp_sGjUQILHZtKzai/exec";
 
@@ -11,9 +11,6 @@ var form    = document.getElementById("wizard-form");
 var msg     = document.getElementById("msg");
 
 var phone      = document.getElementById("phone");
-var btnPass    = document.getElementById("btn-pass");
-var passMsg    = document.getElementById("pass-msg");
-var passVerified = false;
 
 var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 var PHONE_RE = /^01[016789][0-9]{7,8}$/;
@@ -37,46 +34,15 @@ function val(id) { var el = document.getElementById(id); return el ? el.value : 
 function showMsg(text, busy) { msg.textContent = text || ""; msg.classList.toggle("busy", !!busy); }
 function clearMsg() { showMsg(""); }
 
-function setPassMsg(text, kind) {
-  passMsg.textContent = text || "";
-  passMsg.classList.remove("ok", "bad");
-  if (kind) passMsg.classList.add(kind);
-}
-
 // ── 전화번호 숫자만 허용 ──
 phone.addEventListener("input", function () {
   phone.value = phone.value.replace(/[^0-9]/g, "");
-});
-
-// ── PASS 인증 (데모 — 실제 구현 시 PASS API 연동 필요) ──
-btnPass.addEventListener("click", function () {
-  var num = phone.value.trim();
-  if (!PHONE_RE.test(num)) {
-    setPassMsg("올바른 휴대폰 번호를 입력해 주세요. (예: 01012345678)", "bad");
-    return;
-  }
-  btnPass.disabled = true;
-  btnPass.textContent = "인증 중...";
-  setPassMsg("PASS 앱으로 인증 요청을 보냈어요. 잠시만 기다려 주세요. (데모 모드)");
-
-  // 데모: 2초 후 자동 완료 — 실제 구현 시 PASS 콜백 수신으로 교체
-  setTimeout(function () {
-    passVerified = true;
-    setPassMsg("✓ 본인인증이 완료되었습니다.", "ok");
-    btnPass.textContent = "인증완료 ✓";
-    btnPass.classList.add("done");
-    phone.disabled = true;
-    document.getElementById("phone-field").classList.add("verified");
-  }, 2000);
 });
 
 // ── 전체 데이터 수집 ──
 function getData() {
   var fd = new FormData(form), d = {};
   fd.forEach(function (v, k) { d[k] = v; });
-  // disabled 상태의 phone 값 보강
-  if (phone && (!d["전화번호"] || !String(d["전화번호"]).trim())) d["전화번호"] = phone.value;
-  d["PASS인증여부"] = passVerified ? "TRUE" : "FALSE";
   d["개인정보동의"]   = document.getElementById("agree-privacy").checked ? "TRUE" : "FALSE";
   d["약관동의"]       = document.getElementById("agree-terms").checked ? "TRUE" : "FALSE";
   d["마케팅수신동의"] = document.getElementById("agree-marketing").checked ? "TRUE" : "FALSE";
@@ -98,8 +64,7 @@ function validateStep(step) {
     return null;
   }
   if (step === 3) {
-    if (!PHONE_RE.test(val("phone")) && !passVerified) return "올바른 휴대폰 번호를 입력해 주세요.";
-    if (!passVerified) return "PASS 본인인증을 완료해 주세요.";
+    if (!PHONE_RE.test(val("phone"))) return "올바른 휴대폰 번호를 입력해 주세요. (예: 01012345678)";
     if (!EMAIL_RE.test(val("email").trim())) return "올바른 이메일 주소를 입력해 주세요.";
     if (!document.getElementById("agree-privacy").checked) return "[필수] 개인정보 수집·이용에 동의해 주세요.";
     if (!document.getElementById("agree-terms").checked)   return "[필수] 이용약관에 동의해 주세요.";
