@@ -35,6 +35,7 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 9px;
   }
+  .appbar .home { display: flex; align-items: center; gap: 10px; text-decoration: none; color: #000; }
   .appbar .title { font-size: 14px; font-weight: 700; }
   .appbar .right { margin-left: auto; font-size: 12px; color: #666; }
   .appbar .back {
@@ -217,11 +218,11 @@
 /* ---------------------------------------------------------------
    0. 입력 검사 켜고 끄기
 
-   지금은 플로우만 확인하는 단계라, 아무것도 입력하지 않아도
-   다음 단계로 넘어갑니다. (필수값, 약관 동의, 학력 인증 전부 통과)
-   나중에 검사를 다시 켜려면 아래 값을 false 로 바꾸면 됩니다.
+   true 로 두면 아무것도 입력하지 않아도 다음 단계로 넘어갑니다.
+   (필수값, 약관 동의, 학력 인증 전부 통과)
+   지금은 false 라, 제대로 입력해야 넘어갑니다.
    --------------------------------------------------------------- */
-var SKIP_VALIDATION = true;
+var SKIP_VALIDATION = false;
 
 /* ---------------------------------------------------------------
    1. 신청서에서 받을 항목
@@ -310,7 +311,8 @@ function appbar(opts) {
   opts = opts || {};
   var left = opts.back
     ? '<button class="back" onclick="history.back()">← 뒤로</button>'
-    : '<span class="logo">로고</span><span class="title">알앤디</span>';
+    : '<a class="home" href="#/home" onclick="closeMenu()">' +
+        '<span class="logo">로고</span><span class="title">알앤디</span></a>';
   var right = '';
   if (opts.menu) {
     right = '<div class="rightgroup">' +
@@ -523,7 +525,7 @@ views['/done'] = function (d) {
       '<p>로테이션이 무엇인지 두세 줄로 짧게 설명하는 자리.</p>' +
       '<a class="textlink" href="#/rotation">로테이션 자세히 알아보기</a>' +
       '<div class="cta">' +
-        '<button class="btn" onclick="location.hash=\'#/rotation-meeting\'">로테이션 신청하기</button>' +
+        '<button class="btn" onclick="goRotation(true)">로테이션 신청하기</button>' +
       '</div>' +
     '</div>' +
 
@@ -541,7 +543,7 @@ views['/rotation'] = function (d) {
       '<span class="tag">사전가입 다음 단계</span>' +
       '<h1>로테이션이란?</h1>' +
       '<p>한 문단 설명 자리.</p>' +
-      '<div class="cta"><button class="btn" onclick="location.hash=\'#/rotation-meeting\'">로테이션 신청하기</button></div>' +
+      '<div class="cta"><button class="btn" onclick="goRotation(false)">로테이션 신청하기</button></div>' +
     '</div>' +
     '<div class="sec">' +
       '<h2>무엇이 다른가</h2>' +
@@ -554,11 +556,21 @@ views['/rotation'] = function (d) {
       '<div class="ph" style="min-height:80px">주기, 인원, 열리는 요일과 시간 자리</div>' +
     '</div>' +
     '<div class="sec last">' +
-      '<button class="btn" onclick="location.hash=\'#/rotation-meeting\'">로테이션 신청하기</button>' +
+      '<button class="btn" onclick="goRotation(false)">로테이션 신청하기</button>' +
     '</div>' +
     siteFooter() +
     '</div>';
 };
+
+/* 로테이션 신청으로 들어가는 길목.
+   사전가입 완료 화면에서 눌렀으면 true, 로테이션 소개에서 눌렀으면 false.
+   이 값으로 신청서에서 기본 정보를 채워줄지 말지를 정합니다. */
+function goRotation(fromSignup) {
+  var d = load();
+  d.fromSignup = !!fromSignup;
+  save(d);
+  location.hash = '#/rotation-meeting';
+}
 
 /* 사전가입을 실제로 했는지 판단합니다.
    기록만 있고 값이 전부 비어 있으면(검사를 꺼둔 채 빈칸으로 통과한 경우)
@@ -673,7 +685,7 @@ views['/rotation-apply'] = function (d) {
   for (i in (d.signup || {})) v[i] = d.signup[i];
   for (i in (d.rotationDraft || {})) v[i] = d.rotationDraft[i];
   for (i in (d.rotation || {})) v[i] = d.rotation[i];
-  var prefilled = hasSignup(d);
+  var prefilled = !!d.fromSignup && hasSignup(d);
 
   /* 기본 정보.
      사전가입을 한 사람에게는 확인용 표만 보여줍니다. 여기서 고치지는 않습니다.
@@ -877,7 +889,7 @@ function keepDraft(d) {
 
 function submitRotation() {
   var d = load();
-  var prefilled = hasSignup(d);
+  var prefilled = !!d.fromSignup && hasSignup(d);
 
   /* 사전가입을 한 사람은 기본 정보를 화면에서 받지 않고, 저장된 값을 그대로 씁니다 */
   var v = prefilled ? {} : readFields(ROTATION_FIELDS);
