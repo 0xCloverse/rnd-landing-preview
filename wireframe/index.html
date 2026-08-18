@@ -660,6 +660,7 @@ views['/rotation-apply'] = function (d) {
   /* 사전가입 때 쓴 내용을 먼저 깔고, 로테이션에서 고친 게 있으면 그걸 덮어씁니다 */
   var v = {}, i;
   for (i in (d.signup || {})) v[i] = d.signup[i];
+  for (i in (d.rotationDraft || {})) v[i] = d.rotationDraft[i];
   for (i in (d.rotation || {})) v[i] = d.rotation[i];
   var prefilled = !!d.signup;
 
@@ -841,8 +842,27 @@ function submitAgree() {
 /* 학력 인증.
    진짜 서비스에서는 여기서 서류 파일을 올리고 우리가 확인합니다.
    지금은 플로우를 보는 단계라 누르면 인증된 것으로 처리합니다. */
-function docVerify() { var d = load(); d.docVerified = true; save(d); render(); }
-function docReset() { var d = load(); delete d.docVerified; save(d); render(); }
+function docVerify() { var d = load(); keepDraft(d); d.docVerified = true; save(d); render(); }
+function docReset() { var d = load(); keepDraft(d); delete d.docVerified; save(d); render(); }
+
+/* 화면을 다시 그리기 전에, 입력칸에 쳐둔 값을 잠시 보관합니다.
+   이게 없으면 학력 인증 버튼을 누를 때 입력한 내용이 사라집니다. */
+function keepDraft(d) {
+  if (!document.getElementById('f_' + ROTATION_FIELDS[0].key)) return;
+  var draft = {};
+  ROTATION_FIELDS.forEach(function (f) {
+    var v = '';
+    if (f.type === 'radio') {
+      var picked = document.querySelector('input[name="f_' + f.key + '"]:checked');
+      v = picked ? picked.value : '';
+    } else {
+      var el = document.getElementById('f_' + f.key);
+      v = el ? el.value : '';
+    }
+    draft[f.key] = v;
+  });
+  d.rotationDraft = draft;
+}
 
 function submitRotation() {
   var d = load();
