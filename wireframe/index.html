@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>알앤디 사전가입</title>
+<style>
+  /* ===========================================================
+     흑백 뼈대. 검정, 흰색, 회색만 사용합니다.
+     모바일(폭 390) 기준이고, PC에서 열면 가운데에 좁게 보입니다.
+     =========================================================== */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: system-ui, -apple-system, "Apple SD Gothic Neo", sans-serif;
+    background: #fff;
+    color: #000;
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .phone { width: 100%; max-width: 390px; margin: 0 auto; }
+
+  /* 상단바. 스크롤해도 위에 붙어 있습니다 */
+  .appbar {
+    position: sticky; top: 0; z-index: 5;
+    background: #fff;
+    display: flex; align-items: center; gap: 10px;
+    height: 52px; padding: 0 16px;
+    border-bottom: 1px solid #ccc;
+  }
+  .appbar .logo {
+    width: 26px; height: 26px;
+    border: 1px solid #000;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px;
+  }
+  .appbar .title { font-size: 14px; font-weight: 700; }
+  .appbar .right { margin-left: auto; font-size: 12px; color: #666; }
+  .appbar .back {
+    font: inherit; font-size: 13px; background: none;
+    border: 0; padding: 0; cursor: pointer; text-decoration: underline;
+  }
+
+  .sec { padding: 20px 16px; border-bottom: 1px solid #eee; }
+  .sec.last { border-bottom: 0; }
+
+  h1 { font-size: 22px; line-height: 1.35; margin-bottom: 8px; }
+  h2 { font-size: 16px; margin-bottom: 10px; }
+  h3 { font-size: 14px; margin-bottom: 4px; }
+  p  { font-size: 13px; color: #444; }
+  .muted { color: #777; font-size: 12px; }
+
+  /* 내용이 들어갈 자리 표시 */
+  .ph {
+    border: 1px dashed #aaa; background: #f5f5f5;
+    color: #777; font-size: 12px;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center; padding: 12px;
+  }
+  .line { height: 10px; background: #e5e5e5; margin-bottom: 6px; }
+  .line.s { width: 60%; }
+
+  .tag {
+    display: inline-block; border: 1px solid #000;
+    font-size: 11px; padding: 2px 7px; margin-bottom: 10px;
+  }
+
+  .card { border: 1px solid #ccc; padding: 14px; margin-bottom: 10px; }
+  .card:last-child { margin-bottom: 0; }
+
+  .row { display: flex; gap: 10px; align-items: flex-start; }
+  .num {
+    flex-shrink: 0; width: 22px; height: 22px;
+    border: 1px solid #000; border-radius: 50%;
+    font-size: 12px; display: flex; align-items: center; justify-content: center;
+  }
+
+  /* 진행바 */
+  .bar { height: 10px; border: 1px solid #999; margin: 10px 0 6px; }
+  .bar > i { display: block; height: 100%; background: #999; width: 60%; }
+  .barlabel { display: flex; justify-content: space-between; font-size: 11px; color: #777; }
+
+  /* 버튼. 본문 안에 놓습니다 */
+  .btn {
+    display: block; width: 100%;
+    font: inherit; font-size: 15px; font-weight: 700;
+    padding: 14px; cursor: pointer;
+    background: #000; color: #fff; border: 1px solid #000;
+  }
+  .btn.sub { background: #fff; color: #000; }
+  .btn:disabled { background: #eee; color: #999; border-color: #eee; cursor: not-allowed; }
+  .btn + .btn { margin-top: 8px; }
+  .cta { margin-top: 18px; }
+  .cta .hint { text-align: center; font-size: 11px; color: #777; margin-top: 8px; }
+  .textlink {
+    display: inline-block; font-size: 13px; color: #000;
+    text-decoration: underline; margin-top: 10px;
+  }
+  button.textlink { font: inherit; font-size: 13px; background: none; border: 0; padding: 0; cursor: pointer; }
+
+  /* 폼 */
+  .field { margin-bottom: 18px; }
+  .field > label.lb { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+  .req { font-weight: 400; color: #777; font-size: 11px; }
+  input[type=text], input[type=email], input[type=number], select, textarea {
+    font: inherit; font-size: 14px; width: 100%;
+    padding: 11px 12px; border: 1px solid #999; background: #fff; color: #000;
+    border-radius: 0;
+  }
+  textarea { min-height: 74px; resize: vertical; }
+  /* 인증 완료 상자 */
+  .verified { border: 1px solid #000; padding: 14px; font-size: 13px; }
+  .verified b { font-size: 14px; }
+
+  /* 달력 */
+  .calhead { text-align: center; font-size: 15px; font-weight: 700; margin-bottom: 12px; }
+  .cal { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  .cal th, .cal td { border: 0; background: none; padding: 2px; text-align: center; }
+  .cal th { font-size: 11px; color: #777; font-weight: 400; padding-bottom: 6px; }
+  .cal .day {
+    display: block; width: 100%; font: inherit; font-size: 13px;
+    padding: 9px 0 7px; background: none; border: 1px solid transparent; color: #000;
+  }
+  .cal .day.has { border-color: #000; cursor: pointer; }
+  .cal .day.full { border-color: #ddd; color: #aaa; cursor: pointer; }
+  .cal .day.on { background: #000; color: #fff; border-color: #000; }
+  .cal .mark { display: block; font-size: 9px; line-height: 1.2; margin-top: 2px; }
+  .callegend { font-size: 11px; color: #777; margin-top: 10px; text-align: center; }
+  .choices { display: flex; gap: 8px; flex-wrap: wrap; }
+  .choices label {
+    font-size: 14px; padding: 10px 14px; border: 1px solid #999; cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .choices input { accent-color: #000; }
+  .err { display: none; font-size: 12px; margin-top: 6px; }
+  .field.bad .err { display: block; }
+  .field.bad input, .field.bad select, .field.bad textarea,
+  .field.bad .choices label { border-color: #000; border-width: 2px; }
+  .field.bad .err::before { content: "! "; font-weight: 700; }
+
+  .agree { display: flex; gap: 10px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid #eee; }
+  .agree:last-of-type { border-bottom: 0; }
+  .agree input { margin-top: 3px; accent-color: #000; }
+  .agree label { font-size: 13px; }
+  .agree .link { font-size: 11px; color: #777; text-decoration: underline; margin-left: auto; white-space: nowrap; }
+  .allagree { border: 1px solid #000; padding: 12px; margin-bottom: 6px; }
+
+  .steps { font-size: 12px; color: #666; margin-bottom: 12px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { border: 1px solid #ccc; padding: 8px 10px; text-align: left; }
+  th { background: #f2f2f2; font-size: 12px; font-weight: 700; }
+
+  /* 상단바 오른쪽: 사전가입 버튼 + 햄버거 */
+  .appbar .rightgroup { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+  .topcta {
+    font: inherit; font-size: 12px; font-weight: 700;
+    background: #000; color: #fff; border: 1px solid #000;
+    padding: 8px 12px; cursor: pointer;
+  }
+
+  /* 햄버거 버튼 (가로 3줄) */
+  .hamb {
+    background: none; border: 0; padding: 4px;
+    cursor: pointer; display: block;
+  }
+  .hamb i { display: block; width: 20px; height: 2px; background: #000; margin: 4px 0; }
+
+  /* 햄버거가 X로 바뀔 때 */
+  .hamb.x i { display: none; }
+  .hamb .xmark { display: none; font-size: 20px; line-height: 20px; width: 20px; }
+  .hamb.x .xmark { display: block; }
+
+  /* 메뉴. 상단바 바로 아래로 펼쳐집니다. 뒤쪽 페이지는 그대로 보입니다 */
+  .menu {
+    display: none;
+    position: fixed; top: 52px; left: 50%; transform: translateX(-50%);
+    width: 100%; max-width: 390px; z-index: 20;
+    background: #fff; border-bottom: 1px solid #ccc;
+  }
+  .menu.on { display: block; }
+  .menu nav a {
+    display: block; padding: 18px 16px; border-bottom: 1px solid #eee;
+    font-size: 17px; color: #000; text-decoration: none;
+  }
+  .menu nav a.on { font-weight: 700; }
+  .menu nav a .sub { display: block; font-size: 12px; color: #777; margin-top: 3px; font-weight: 400; }
+
+  /* 사이트 푸터. 항상 맨 아래 */
+  .sitefoot { padding: 22px 16px 30px; text-align: center; background: #fafafa; }
+  .sitefoot .links { font-size: 12px; margin-bottom: 10px; }
+  .sitefoot .links a { color: #000; text-decoration: underline; }
+  .sitefoot .copy { font-size: 11px; color: #888; }
+  .sitefoot .restart {
+    font: inherit; font-size: 11px; color: #aaa;
+    background: none; border: 0; margin-top: 14px;
+    text-decoration: underline; cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<div id="stage"></div>
+
+<div class="menu" id="menu">
+  <nav id="menunav"></nav>
+</div>
+
+<script>
+/* ===============================================================
+   알앤디 사전가입 뼈대
+   흑백이지만 실제로 눌러서 끝까지 진행되는 사이트입니다.
+   로그인 기능이 없다는 전제로 만들었습니다.
+   =============================================================== */
+
+/* ---------------------------------------------------------------
+   0. 입력 검사 켜고 끄기
+
+   지금은 플로우만 확인하는 단계라, 아무것도 입력하지 않아도
+   다음 단계로 넘어갑니다. (필수값, 약관 동의, 학력 인증 전부 통과)
+   나중에 검사를 다시 켜려면 아래 값을 false 로 바꾸면 됩니다.
+   --------------------------------------------------------------- */
+var SKIP_VALIDATION = true;
+
+/* ---------------------------------------------------------------
+   1. 신청서에서 받을 항목
+   아직 확정 전입니다. 확정되면 이 목록만 고치면 화면이 따라 바뀝니다.
+   --------------------------------------------------------------- */
+var YEARS = [];
+for (var y = 2006; y >= 1975; y--) YEARS.push(String(y));
+
+var SIGNUP_FIELDS = [
+  { key: 'name',   label: '이름',      type: 'text',   required: true, placeholder: '홍길동' },
+  { key: 'gender', label: '성별',      type: 'radio',  required: true, options: ['남성', '여성'] },
+  { key: 'birth',  label: '출생년도',  type: 'select', required: true, options: YEARS },
+  { key: 'region', label: '지역',      type: 'select', required: true,
+    options: ['서울', '경기·인천', '부산·경남', '대구·경북', '대전·충청', '광주·전라', '강원', '제주', '해외'] },
+  { key: 'degree', label: '학위',      type: 'select', required: true,
+    options: ['석사 재학', '석사 졸업', '박사 재학', '박사 졸업'] }
+];
+
+/* 로테이션 신청서의 기본 정보는 사전가입과 똑같습니다 */
+var ROTATION_FIELDS = SIGNUP_FIELDS;
+
+/* 미팅 일정. 달력에 표시됩니다.
+   날짜, 장소, 시간, 정원, 현재 신청 인원 모두 자리만 잡아둔 예시입니다. */
+var CAL_MONTH = '2026-08';
+var MEETINGS = [
+  { date: '2026-08-16', place: '장소 자리 (예: 강남)', time: '오후 7시',      cap: 12, joined: 5 },
+  { date: '2026-08-20', place: '장소 자리 (예: 성수)', time: '오후 7시 30분', cap: 10, joined: 10 },
+  { date: '2026-08-23', place: '장소 자리 (예: 홍대)', time: '오후 6시',      cap: 12, joined: 3 },
+  { date: '2026-08-30', place: '장소 자리 (예: 판교)', time: '오후 7시',      cap: 8,  joined: 0 }
+];
+var DOW = ['일', '월', '화', '수', '목', '금', '토'];
+
+/* 참가비. 아직 정해지지 않아 자리만 잡아둔 값입니다 */
+var FEE = {
+  amount: '000,000원',
+  bank: '○○은행 000-0000-000000',
+  holder: 'ZIZZY STUDIO',
+  due: '신청일로부터 00일 이내'
+};
+
+/* ---------------------------------------------------------------
+   2. 화면 목록 (브라우저 탭 제목에 씁니다)
+   --------------------------------------------------------------- */
+var SCREENS = {
+  '/home':           '알앤디 사전가입',
+  '/apply':          '기본 정보 입력',
+  '/agree':          '약관 동의',
+  '/done':           '사전가입 완료',
+  '/rotation':       '로테이션 소개',
+  '/rotation-meeting': '미팅 날짜 고르기',
+  '/rotation-apply': '로테이션 신청',
+  '/rotation-done':  '로테이션 신청 완료',
+  '/referral':       '친구 추천',
+  '/about':          '알앤디 소개'
+};
+
+/* ---------------------------------------------------------------
+   3. 입력한 내용 임시 보관
+   로그인이 없으므로, 신청서를 쓰는 동안에만 쓰는 임시 저장입니다.
+   완료 화면을 벗어나면 "내 신청 내용"을 다시 볼 방법은 없습니다.
+   --------------------------------------------------------------- */
+var KEY = 'rnd_wireframe_v1';
+function load() { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { return {}; } }
+function save(d) { localStorage.setItem(KEY, JSON.stringify(d)); }
+function resetAll() {
+  if (!confirm('입력한 내용을 지우고 처음 상태로 돌아갑니다.')) return;
+  localStorage.removeItem(KEY);
+  location.hash = '#/home';
+  render();
+}
+
+/* ---------------------------------------------------------------
+   4. 화면 그리기 도구
+   --------------------------------------------------------------- */
+function esc(s) { return String(s).replace(/[&<>"]/g, function (c) {
+  return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+/* 마지막 글자에 받침이 있으면 '을', 없으면 '를' */
+function josa(word) {
+  var c = word.charCodeAt(word.length - 1);
+  if (c < 0xAC00 || c > 0xD7A3) return '를';
+  return (c - 0xAC00) % 28 !== 0 ? '을' : '를';
+}
+
+function appbar(opts) {
+  opts = opts || {};
+  var left = opts.back
+    ? '<button class="back" onclick="history.back()">← 뒤로</button>'
+    : '<span class="logo">로고</span><span class="title">알앤디</span>';
+  var right = '';
+  if (opts.menu) {
+    right = '<div class="rightgroup">' +
+      (opts.cta ? '<button class="topcta" onclick="location.hash=\'#/apply\'">사전가입</button>' : '') +
+      '<button class="hamb" onclick="toggleMenu()" aria-label="메뉴"><i></i><i></i><i></i><span class="xmark">✕</span></button>' +
+      '</div>';
+  } else if (opts.right) {
+    right = '<span class="right">' + esc(opts.right) + '</span>';
+  }
+  return '<div class="appbar">' + left + right + '</div>';
+}
+
+/* 메뉴에 들어갈 탭 목록 */
+var MENU = [
+  ['#/home',     '사전 가입 신청', '1차 모집 중'],
+  ['#/rotation', '로테이션',       '사전가입 다음 단계'],
+  ['#/referral', '친구 추천',      ''],
+  ['#/about',    '알앤디 소개',    '']
+];
+function renderMenu(path) {
+  document.getElementById('menunav').innerHTML = MENU.map(function (m) {
+    var on = ('#' + path) === m[0] ? ' class="on"' : '';
+    return '<a href="' + m[0] + '"' + on + ' onclick="closeMenu()">' + esc(m[1]) +
+      (m[2] ? '<span class="sub">' + esc(m[2]) + '</span>' : '') + '</a>';
+  }).join('');
+}
+function toggleMenu() {
+  var m = document.getElementById('menu');
+  m.classList.contains('on') ? closeMenu() : openMenu();
+}
+function openMenu() {
+  document.getElementById('menu').classList.add('on');
+  var b = document.querySelector('.hamb');
+  if (b) b.classList.add('x');
+}
+function closeMenu() {
+  document.getElementById('menu').classList.remove('on');
+  var b = document.querySelector('.hamb');
+  if (b) b.classList.remove('x');
+}
+
+function todo(msg) { return 'alert(\'' + msg + '\');return false'; }
+
+function siteFooter() {
+  var a = 'href="#" onclick="' + todo('아직 안 만든 화면입니다') + '"';
+  return '<div class="sitefoot">' +
+    '<div class="links"><a ' + a + '>이용약관</a> · <a ' + a + '>개인정보처리방침</a> · <a ' + a + '>문의하기</a></div>' +
+    '<div class="copy">ZIZZY STUDIO · 사업자등록번호 000-00-00000</div>' +
+    '<div class="copy">© 2026 ZIZZY STUDIO</div>' +
+    '<button class="restart" onclick="resetAll()">처음부터 다시 보기</button>' +
+    '</div>';
+}
+
+function field(f, value) {
+  var v = value == null ? '' : value;
+  var inner = '';
+  if (f.type === 'text' || f.type === 'email' || f.type === 'number') {
+    inner = '<input type="' + f.type + '" id="f_' + f.key + '" value="' + esc(v) +
+      '" placeholder="' + esc(f.placeholder || '') + '">';
+  } else if (f.type === 'textarea') {
+    inner = '<textarea id="f_' + f.key + '" placeholder="' + esc(f.placeholder || '') + '">' + esc(v) + '</textarea>';
+  } else if (f.type === 'select') {
+    inner = '<select id="f_' + f.key + '"><option value="">선택하세요</option>' +
+      f.options.map(function (o) {
+        return '<option' + (o === v ? ' selected' : '') + '>' + esc(o) + '</option>';
+      }).join('') + '</select>';
+  } else if (f.type === 'radio') {
+    inner = '<div class="choices">' + f.options.map(function (o) {
+      return '<label><input type="radio" name="f_' + f.key + '" value="' + esc(o) + '"' +
+        (o === v ? ' checked' : '') + '>' + esc(o) + '</label>';
+    }).join('') + '</div>';
+  }
+  var verb = (f.type === 'select' || f.type === 'radio') ? '선택해' : '입력해';
+  return '<div class="field" id="wrap_' + f.key + '">' +
+    '<label class="lb">' + esc(f.label) +
+    (f.required ? ' <span class="req">필수</span>' : ' <span class="req">선택</span>') + '</label>' +
+    inner + '<div class="err" id="err_' + f.key + '">' + esc(f.label) + josa(f.label) + ' ' + verb + ' 주세요</div></div>';
+}
+
+function readFields(fields) {
+  var out = {}, bad = null;
+  fields.forEach(function (f) {
+    var v = '';
+    if (f.type === 'radio') {
+      var picked = document.querySelector('input[name="f_' + f.key + '"]:checked');
+      v = picked ? picked.value : '';
+    } else {
+      var el = document.getElementById('f_' + f.key);
+      v = el ? el.value.trim() : '';
+    }
+    out[f.key] = v;
+    var wrap = document.getElementById('wrap_' + f.key);
+    if (!SKIP_VALIDATION && f.required && !v) {
+      wrap.classList.add('bad');
+      if (!bad) bad = wrap;
+    } else {
+      wrap.classList.remove('bad');
+    }
+  });
+  if (bad) { bad.scrollIntoView({ behavior: 'smooth', block: 'center' }); return null; }
+  return out;
+}
+
+/* ---------------------------------------------------------------
+   5. 화면별 내용
+   --------------------------------------------------------------- */
+var views = {};
+
+/* 사전가입 홈 (랜딩페이지) */
+views['/home'] = function (d) {
+  return '<div class="phone">' + appbar({ menu: true, cta: true }) +
+
+    /* 히어로. 신청 버튼이 여기 있습니다 */
+    '<div class="sec">' +
+      '<span class="tag">1차 모집 중</span>' +
+      '<h1>제목 자리<br>서비스를 한 문장으로</h1>' +
+      '<p>설명 한 줄. 왜 지금 신청해야 하는지.</p>' +
+      '<div class="cta">' +
+        '<button class="btn" onclick="location.hash=\'#/apply\'">사전 가입 신청하기</button>' +
+        '<div class="hint">1분이면 끝납니다</div>' +
+      '</div>' +
+    '</div>' +
+
+    '<div class="sec">' +
+      '<h2>모집 현황</h2>' +
+      '<div class="bar"><i></i></div>' +
+      '<div class="barlabel"><span>100명</span><span>250명</span><span>500명</span></div>' +
+      '<p style="margin-top:8px">현재 000명 참여 · 마감까지 000자리</p>' +
+    '</div>' +
+
+    '<div class="sec">' +
+      '<h2>혜택</h2>' +
+      '<div class="card"><h3>혜택 1 제목</h3><div class="line"></div><div class="line s"></div></div>' +
+      '<div class="card"><h3>혜택 2 제목</h3><div class="line"></div><div class="line s"></div></div>' +
+      '<div class="card"><h3>혜택 3 제목</h3><div class="line"></div><div class="line s"></div></div>' +
+    '</div>' +
+
+    '<div class="sec">' +
+      '<h2>알앤디 소개</h2>' +
+      '<p>어떤 서비스인지 두세 줄로 짧게 설명하는 자리.</p>' +
+      '<div class="ph" style="min-height:120px;margin-top:12px">앱 화면 또는 이미지 자리</div>' +
+    '</div>' +
+
+    /* 다 읽고 내려온 사람을 위해 마지막에 한 번 더 */
+    '<div class="sec last">' +
+      '<button class="btn" onclick="location.hash=\'#/apply\'">사전 가입 신청하기</button>' +
+    '</div>' +
+
+    siteFooter() +
+    '</div>';
+};
+
+/* 신청서 1/2 기본 정보 */
+views['/apply'] = function (d) {
+  var v = d.signupDraft || {};
+  return '<div class="phone">' + appbar({ back: true, right: '1 / 2' }) +
+    '<div class="sec last">' +
+      '<div class="steps">1단계 · 기본 정보</div>' +
+      '<h2>기본 정보를 입력해 주세요</h2>' +
+      '<p class="muted" style="margin-bottom:18px">인증 절차는 없습니다. 아래 항목만 받습니다.</p>' +
+      SIGNUP_FIELDS.map(function (f) { return field(f, v[f.key]); }).join('') +
+      '<div class="cta"><button class="btn" onclick="submitApply()">다음</button></div>' +
+    '</div></div>';
+};
+
+/* 신청서 2/2 약관 동의 */
+views['/agree'] = function (d) {
+  return '<div class="phone">' + appbar({ back: true, right: '2 / 2' }) +
+    '<div class="sec last">' +
+      '<div class="steps">2단계 · 약관 동의</div>' +
+      '<h2>약관에 동의해 주세요</h2>' +
+      '<div class="allagree"><label style="display:flex;gap:10px;align-items:center;font-size:14px;font-weight:700">' +
+        '<input type="checkbox" id="ag_all" onchange="toggleAll(this)">전체 동의</label></div>' +
+      '<div class="agree"><input type="checkbox" class="ag" id="ag1"><label for="ag1">[필수] 개인정보 수집·이용 동의</label><a class="link" href="#" onclick="' + todo('약관 전문 화면은 아직 안 만들었습니다') + '">보기</a></div>' +
+      '<div class="agree"><input type="checkbox" class="ag" id="ag2"><label for="ag2">[필수] 서비스 이용약관 동의</label><a class="link" href="#" onclick="' + todo('약관 전문 화면은 아직 안 만들었습니다') + '">보기</a></div>' +
+      '<div class="agree"><input type="checkbox" class="ag" id="ag3"><label for="ag3">[선택] 마케팅 정보 수신 동의</label></div>' +
+      '<div class="field" id="wrap_agree" style="margin-top:10px"><div class="err">필수 약관에 동의해야 제출할 수 있습니다</div></div>' +
+      '<div class="cta"><button class="btn" onclick="submitAgree()">신청서 제출하기</button></div>' +
+    '</div></div>';
+};
+
+/* 사전가입 완료. 이 화면을 벗어나면 다시 볼 수 없습니다 (로그인 없음) */
+views['/done'] = function (d) {
+  var v = d.signup || {};
+  var rows = SIGNUP_FIELDS.map(function (f) {
+    return '<tr><th style="width:34%">' + esc(f.label) + '</th><td>' + esc(v[f.key] || '-') + '</td></tr>';
+  }).join('');
+  return '<div class="phone">' + appbar({ right: '완료' }) +
+    '<div class="sec">' +
+      '<h1>신청이 접수되었습니다</h1>' +
+      '<p>신청 번호 ' + esc(d.code || '-') + '</p>' +
+    '</div>' +
+    '<div class="sec">' +
+      '<h2>제출한 내용</h2>' +
+      '<table>' + rows + '</table>' +
+    '</div>' +
+    /* 카카오 채널 안내. 추천인 코드는 여기로 보냅니다 */
+    '<div class="sec">' +
+      '<h2>추천인 코드 받기</h2>' +
+      '<p>추천인 코드와 링크는 카카오 채널로 보내드립니다.</p>' +
+      '<p class="muted" style="margin-top:6px">카카오 채널을 추가하고 신청번호 <b>' + esc(d.code || '-') + '</b>을 보내주세요.</p>' +
+      '<div class="cta">' +
+        '<button class="btn sub" onclick="' + todo('카카오 채널 주소는 아직 정해지지 않았습니다') + '">카카오 채널 추가하기</button>' +
+      '</div>' +
+    '</div>' +
+
+    /* 로테이션 안내와 이동 버튼 */
+    '<div class="sec">' +
+      '<h2>다음 단계, 로테이션</h2>' +
+      '<p>로테이션이 무엇인지 두세 줄로 짧게 설명하는 자리.</p>' +
+      '<a class="textlink" href="#/rotation">로테이션 자세히 알아보기</a>' +
+      '<div class="cta">' +
+        '<button class="btn" onclick="location.hash=\'#/rotation-meeting\'">로테이션 신청하기</button>' +
+      '</div>' +
+    '</div>' +
+
+    '<div class="sec last">' +
+      '<button class="btn sub" onclick="location.hash=\'#/home\'">홈으로</button>' +
+    '</div>' +
+    siteFooter() +
+    '</div>';
+};
+
+/* 로테이션 소개 */
+views['/rotation'] = function (d) {
+  return '<div class="phone">' + appbar({ menu: true, cta: true }) +
+    '<div class="sec">' +
+      '<span class="tag">사전가입 다음 단계</span>' +
+      '<h1>로테이션이란?</h1>' +
+      '<p>한 문단 설명 자리.</p>' +
+      '<div class="cta"><button class="btn" onclick="location.hash=\'#/rotation-meeting\'">로테이션 신청하기</button></div>' +
+    '</div>' +
+    '<div class="sec">' +
+      '<h2>무엇이 다른가</h2>' +
+      '<div class="card"><div class="row"><span class="num">1</span><div><h3>차별점 1 제목</h3><div class="line"></div><div class="line s"></div></div></div></div>' +
+      '<div class="card"><div class="row"><span class="num">2</span><div><h3>차별점 2 제목</h3><div class="line"></div><div class="line s"></div></div></div></div>' +
+      '<div class="card"><div class="row"><span class="num">3</span><div><h3>차별점 3 제목</h3><div class="line"></div><div class="line s"></div></div></div></div>' +
+    '</div>' +
+    '<div class="sec">' +
+      '<h2>진행 방식</h2>' +
+      '<div class="ph" style="min-height:80px">주기, 인원, 열리는 요일과 시간 자리</div>' +
+    '</div>' +
+    '<div class="sec last">' +
+      '<button class="btn" onclick="location.hash=\'#/rotation-meeting\'">로테이션 신청하기</button>' +
+    '</div>' +
+    siteFooter() +
+    '</div>';
+};
+
+/* 미팅 고르기 (로테이션 신청의 첫 화면) */
+function pad2(n) { return (n < 10 ? '0' : '') + n; }
+function meetingOf(dateStr) {
+  for (var i = 0; i < MEETINGS.length; i++) if (MEETINGS[i].date === dateStr) return MEETINGS[i];
+  return null;
+}
+function prettyDate(dateStr) {
+  var p = dateStr.split('-');
+  var dt = new Date(+p[0], +p[1] - 1, +p[2]);
+  return (+p[1]) + '월 ' + (+p[2]) + '일 (' + DOW[dt.getDay()] + ')';
+}
+function pickMeeting(dateStr) {
+  var d = load();
+  d.meetingDate = dateStr;
+  save(d);
+  render();
+}
+
+function calendarHtml(monthStr, pick) {
+  var y = +monthStr.split('-')[0], m = +monthStr.split('-')[1];
+  var startDow = new Date(y, m - 1, 1).getDay();
+  var lastDay = new Date(y, m, 0).getDate();
+
+  var cells = [];
+  var i;
+  for (i = 0; i < startDow; i++) cells.push(null);
+  for (i = 1; i <= lastDay; i++) cells.push(i);
+  while (cells.length % 7 !== 0) cells.push(null);
+
+  var html = '<div class="calhead">' + y + '년 ' + m + '월</div>' +
+    '<table class="cal"><tr>' + DOW.map(function (w) { return '<th>' + w + '</th>'; }).join('') + '</tr>';
+
+  for (i = 0; i < cells.length; i += 7) {
+    html += '<tr>';
+    for (var j = 0; j < 7; j++) {
+      var day = cells[i + j];
+      if (!day) { html += '<td></td>'; continue; }
+      var key = y + '-' + pad2(m) + '-' + pad2(day);
+      var mt = meetingOf(key);
+      var cls = 'day';
+      var mark = '';
+      if (mt) {
+        var left = mt.cap - mt.joined;
+        if (left <= 0) { cls += ' full'; mark = '<span class="mark">마감</span>'; }
+        else { cls += ' has'; mark = '<span class="mark">' + left + '자리</span>'; }
+        if (key === pick) cls += ' on';
+        html += '<td><button class="' + cls + '" onclick="pickMeeting(\'' + key + '\')">' + day + mark + '</button></td>';
+      } else {
+        html += '<td><span class="' + cls + '">' + day + '</span></td>';
+      }
+    }
+    html += '</tr>';
+  }
+  return html + '</table>' +
+    '<div class="callegend">테두리가 있는 날에 미팅이 열립니다</div>';
+}
+
+views['/rotation-meeting'] = function (d) {
+  var pick = d.meetingDate;
+  var sel = pick ? meetingOf(pick) : null;
+
+  var detail;
+  if (sel) {
+    var left = sel.cap - sel.joined;
+    detail =
+      '<h2>' + esc(prettyDate(sel.date)) + '</h2>' +
+      '<table style="margin-top:10px">' +
+        '<tr><th style="width:34%">장소</th><td>' + esc(sel.place) + '</td></tr>' +
+        '<tr><th>시간</th><td>' + esc(sel.time) + '</td></tr>' +
+        '<tr><th>정원</th><td>' + sel.cap + '명</td></tr>' +
+        '<tr><th>신청 현황</th><td>' + sel.joined + '명 신청 · ' +
+          (left > 0 ? left + '자리 남음' : '<b>마감</b>') + '</td></tr>' +
+      '</table>' +
+      '<div class="bar" style="margin-top:12px"><i style="width:' +
+        Math.round(sel.joined / sel.cap * 100) + '%"></i></div>' +
+      '<div class="cta">' +
+        (left > 0
+          ? '<button class="btn" onclick="location.hash=\'#/rotation-apply\'">이 미팅으로 신청하기</button>'
+          : '<button class="btn" disabled>정원이 찼습니다</button>') +
+      '</div>';
+  } else {
+    detail = '<p class="muted">날짜를 고르면 미팅 정보가 여기에 나옵니다.</p>';
+  }
+
+  return '<div class="phone">' + appbar({ back: true }) +
+    '<div class="sec">' +
+      '<h1>미팅 날짜 고르기</h1>' +
+      '<p>참여하고 싶은 날짜를 골라주세요.</p>' +
+    '</div>' +
+    '<div class="sec">' + calendarHtml(CAL_MONTH, pick) + '</div>' +
+    '<div class="sec last">' + detail + '</div>' +
+    siteFooter() +
+    '</div>';
+};
+
+/* 로테이션 신청서 */
+views['/rotation-apply'] = function (d) {
+  /* 사전가입 때 쓴 내용을 먼저 깔고, 로테이션에서 고친 게 있으면 그걸 덮어씁니다 */
+  var v = {}, i;
+  for (i in (d.signup || {})) v[i] = d.signup[i];
+  for (i in (d.rotation || {})) v[i] = d.rotation[i];
+  var prefilled = !!d.signup;
+
+  /* 기본 정보.
+     사전가입을 한 사람에게는 확인용 표만 보여줍니다. 여기서 고치지는 않습니다.
+     사전가입 없이 바로 온 사람에게만 입력칸을 보여줍니다. */
+  var step2;
+  if (prefilled) {
+    var summary = ROTATION_FIELDS.map(function (f) {
+      return '<tr><th style="width:34%">' + esc(f.label) + '</th><td>' + esc(v[f.key] || '-') + '</td></tr>';
+    }).join('');
+    step2 = '<div class="sec">' +
+      '<h2>기본 정보</h2>' +
+      '<p class="muted">사전가입 때 입력하신 내용으로 신청합니다.</p>' +
+      '<table style="margin-top:10px">' + summary + '</table>' +
+    '</div>';
+  } else {
+    step2 = '<div class="sec">' +
+      '<h2>기본 정보</h2>' +
+      '<p class="muted" style="margin-bottom:18px">아래 항목을 입력해 주세요.</p>' +
+      ROTATION_FIELDS.map(function (f) { return field(f, v[f.key]); }).join('') +
+    '</div>';
+  }
+
+  /* 고른 미팅을 맨 위에 다시 보여줍니다 */
+  var mt = d.meetingDate ? meetingOf(d.meetingDate) : null;
+  var picked = mt
+    ? '<div class="sec">' +
+        '<h2>신청할 미팅</h2>' +
+        '<table style="margin-top:10px">' +
+          '<tr><th style="width:34%">날짜</th><td>' + esc(prettyDate(mt.date)) + '</td></tr>' +
+          '<tr><th>장소</th><td>' + esc(mt.place) + '</td></tr>' +
+          '<tr><th>시간</th><td>' + esc(mt.time) + '</td></tr>' +
+        '</table>' +
+        '<a class="textlink" href="#/rotation-meeting">다른 날짜 고르기</a>' +
+      '</div>'
+    : '';
+
+  return '<div class="phone">' + appbar({ back: true }) + picked + step2 +
+    '<div class="sec last">' +
+      '<h2>학력 인증</h2>' +
+      '<p class="muted">학생증, 재학증명서, 졸업증명서 중 하나를 올려주세요.</p>' +
+      (d.docVerified
+        ? '<div class="verified" style="margin-top:14px">' +
+            '<b>학력 인증이 완료되었습니다</b>' +
+            '<div class="muted" style="margin-top:4px">제출한 서류를 확인했습니다.</div>' +
+            '<button class="textlink" onclick="docReset()">다시 인증하기</button>' +
+          '</div>'
+        : '<div class="cta">' +
+            '<button class="btn sub" onclick="docVerify()">서류 올리고 인증하기</button>' +
+            '<div class="hint">실제 서비스에서는 여기서 파일을 올립니다. 지금은 누르면 인증된 것으로 처리됩니다</div>' +
+          '</div>' +
+          '<div class="field" id="wrap_doc"><div class="err">학력 인증을 먼저 해주세요</div></div>') +
+      '<div class="cta"><button class="btn" onclick="submitRotation()">신청하기</button></div>' +
+    '</div></div>';
+};
+
+/* 친구 추천 (아직 뼈대만) */
+views['/referral'] = function (d) {
+  return '<div class="phone">' + appbar({ menu: true, cta: true }) +
+    '<div class="sec">' +
+      '<h1>친구 추천</h1>' +
+      '<p>친구를 추천하면 무엇을 받는지 설명하는 자리.</p>' +
+    '</div>' +
+    '<div class="sec">' +
+      '<h2>추천 방법</h2>' +
+      '<div class="row" style="margin-bottom:10px"><span class="num">1</span><div><h3>단계 1 제목 자리</h3><div class="line"></div></div></div>' +
+      '<div class="row" style="margin-bottom:10px"><span class="num">2</span><div><h3>단계 2 제목 자리</h3><div class="line"></div></div></div>' +
+      '<div class="row"><span class="num">3</span><div><h3>단계 3 제목 자리</h3><div class="line"></div></div></div>' +
+    '</div>' +
+    '<div class="sec last">' +
+      '<div class="ph" style="min-height:90px">추천 코드와 리워드 영역 자리<br>(내용 미정)</div>' +
+    '</div>' +
+    siteFooter() +
+    '</div>';
+};
+
+/* 알앤디 소개 (아직 뼈대만) */
+views['/about'] = function (d) {
+  return '<div class="phone">' + appbar({ menu: true, cta: true }) +
+    '<div class="sec">' +
+      '<h1>알앤디는<br>이런 서비스입니다</h1>' +
+      '<p>한 문단 설명 자리.</p>' +
+    '</div>' +
+    '<div class="sec">' +
+      '<h2>앱 화면</h2>' +
+      '<div class="ph" style="min-height:200px">앱 화면 이미지 자리</div>' +
+    '</div>' +
+    '<div class="sec">' +
+      '<h2>만든 사람</h2>' +
+      '<div class="card"><h3>파운더 소개 자리</h3><div class="line"></div><div class="line s"></div></div>' +
+    '</div>' +
+    '<div class="sec last">' +
+      '<button class="btn" onclick="location.hash=\'#/apply\'">사전 가입 신청하기</button>' +
+    '</div>' +
+    siteFooter() +
+    '</div>';
+};
+
+/* 로테이션 완료 */
+views['/rotation-done'] = function (d) {
+  return '<div class="phone">' + appbar({ menu: true }) +
+    '<div class="sec">' +
+      '<h1>신청이 접수되었습니다</h1>' +
+      '<p>아래 계좌로 참가비를 입금해 주세요.</p>' +
+      '<p class="muted" style="margin-top:6px">신청번호 ' + esc(d.rotationCode || '-') + '</p>' +
+    '</div>' +
+
+    (d.meetingDate && meetingOf(d.meetingDate)
+      ? '<div class="sec">' +
+          '<h2>신청한 미팅</h2>' +
+          '<table style="margin-top:10px">' +
+            '<tr><th style="width:34%">날짜</th><td>' + esc(prettyDate(d.meetingDate)) + '</td></tr>' +
+            '<tr><th>장소</th><td>' + esc(meetingOf(d.meetingDate).place) + '</td></tr>' +
+            '<tr><th>시간</th><td>' + esc(meetingOf(d.meetingDate).time) + '</td></tr>' +
+          '</table>' +
+        '</div>'
+      : '') +
+
+    '<div class="sec">' +
+      '<h2>참가비 입금</h2>' +
+      '<table style="margin-top:10px">' +
+        '<tr><th style="width:34%">금액</th><td><b>' + esc(FEE.amount) + '</b></td></tr>' +
+        '<tr><th>입금 계좌</th><td>' + esc(FEE.bank) + '</td></tr>' +
+        '<tr><th>예금주</th><td>' + esc(FEE.holder) + '</td></tr>' +
+        '<tr><th>입금자명</th><td><b>' + esc(d.payName || '-') + '</b></td></tr>' +
+        '<tr><th>입금 기한</th><td>' + esc(FEE.due) + '</td></tr>' +
+      '</table>' +
+      '<p class="muted" style="margin-top:10px">누가 보낸 돈인지 확인해야 해서, 입금자명을 위와 똑같이 적어주세요.</p>' +
+    '</div>' +
+
+    '<div class="sec">' +
+      '<h2>입금 확인 후 안내</h2>' +
+      '<p>입금이 확인되면 카카오 채널로 다음 일정을 안내해 드립니다.</p>' +
+      '<p class="muted" style="margin-top:6px">카카오 채널을 추가하고 신청번호 <b>' + esc(d.rotationCode || '-') + '</b>을 보내주세요.</p>' +
+      '<div class="cta">' +
+        '<button class="btn sub" onclick="' + todo('카카오 채널 주소는 아직 정해지지 않았습니다') + '">카카오 채널 추가하기</button>' +
+      '</div>' +
+    '</div>' +
+
+    '<div class="sec last">' +
+      '<button class="btn" onclick="location.hash=\'#/home\'">홈으로 돌아가기</button>' +
+    '</div>' +
+    siteFooter() +
+    '</div>';
+};
+
+/* ---------------------------------------------------------------
+   6. 동작
+   --------------------------------------------------------------- */
+function submitApply() {
+  var v = readFields(SIGNUP_FIELDS);
+  if (!v) return;
+  var d = load();
+  d.signupDraft = v;
+  save(d);
+  location.hash = '#/agree';
+}
+
+function toggleAll(el) {
+  var list = document.querySelectorAll('.ag');
+  for (var i = 0; i < list.length; i++) list[i].checked = el.checked;
+}
+
+function submitAgree() {
+  var ok = document.getElementById('ag1').checked && document.getElementById('ag2').checked;
+  var wrap = document.getElementById('wrap_agree');
+  if (!SKIP_VALIDATION && !ok) { wrap.classList.add('bad'); wrap.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+  wrap.classList.remove('bad');
+  var d = load();
+  d.signup = d.signupDraft || {};
+  d.marketing = document.getElementById('ag3').checked;
+  d.code = 'RND-' + String(Math.floor(Math.random() * 9000) + 1000);
+  delete d.signupDraft;
+  save(d);
+  location.hash = '#/done';
+}
+
+/* 학력 인증.
+   진짜 서비스에서는 여기서 서류 파일을 올리고 우리가 확인합니다.
+   지금은 플로우를 보는 단계라 누르면 인증된 것으로 처리합니다. */
+function docVerify() { var d = load(); d.docVerified = true; save(d); render(); }
+function docReset() { var d = load(); delete d.docVerified; save(d); render(); }
+
+function submitRotation() {
+  var d = load();
+  var prefilled = !!d.signup;
+
+  /* 사전가입을 한 사람은 기본 정보를 화면에서 받지 않고, 저장된 값을 그대로 씁니다 */
+  var v = prefilled ? {} : readFields(ROTATION_FIELDS);
+  if (!v) return;
+  if (prefilled) {
+    ROTATION_FIELDS.forEach(function (f) { v[f.key] = d.signup[f.key]; });
+  }
+
+  /* 학력 인증을 안 했으면 막습니다 */
+  if (!SKIP_VALIDATION && !d.docVerified) {
+    var wrap = document.getElementById('wrap_doc');
+    if (wrap) { wrap.classList.add('bad'); wrap.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+    return;
+  }
+
+  var digits = String(Math.floor(Math.random() * 9000) + 1000);
+  d.rotation = v;
+  d.rotationCode = 'RND-R' + digits;
+  d.payName = (v.name || '') + digits;
+  save(d);
+  location.hash = '#/rotation-done';
+}
+
+/* ---------------------------------------------------------------
+   7. 화면 전환
+   --------------------------------------------------------------- */
+function render() {
+  var path = location.hash.replace('#', '');
+  if (!views[path]) path = '/home';
+  var d = load();
+
+  /* 앞 단계를 건너뛰고 주소로 바로 들어오면 되돌려 보냅니다 */
+  if (path === '/agree' && !d.signupDraft) path = '/apply';
+  if (path === '/done' && !d.signup) path = '/home';
+  if (path === '/rotation-done' && !d.rotationCode) path = '/rotation';
+
+  if (location.hash !== '#' + path) history.replaceState(null, '', '#' + path);
+
+  document.title = SCREENS[path] + ' · 알앤디';
+  document.getElementById('stage').innerHTML = views[path](d);
+  renderMenu(path);
+  closeMenu();
+  window.scrollTo(0, 0);
+}
+
+window.addEventListener('hashchange', render);
+if (!location.hash) history.replaceState(null, '', '#/home');
+render();
+</script>
+</body>
+</html>
