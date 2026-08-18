@@ -190,14 +190,7 @@
 
   /* 친구 추천 페이지에 넣는 룰렛 그림 */
   .wheelshot { position: relative; width: 260px; margin: 0 auto; }
-  .wheelshot > img {
-    width: 100%; display: block;
-    animation: slowspin 36s linear infinite;
-  }
-  @keyframes slowspin { to { transform: rotate(360deg); } }
-  @media (prefers-reduced-motion: reduce) {
-    .wheelshot > img { animation: none; }
-  }
+  .wheelshot > img { width: 100%; display: block; }
   .wheelshot .pin {
     position: absolute; top: -6px; left: 50%; transform: translateX(-50%);
     width: 0; height: 0;
