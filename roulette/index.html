@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>알앤디 리워드 룰렛</title>
+<style>
+  /* ===========================================================
+     알앤디 리워드 룰렛 · 모바일
+     색 · 글자 · 모서리는 피그마 RND Design System 값 그대로.
+     =========================================================== */
+  :root {
+    --brand-50:#E5FBF8; --brand-100:#B8F5EC; --brand-200:#8AEFE0; --brand-300:#5DE9D4;
+    --brand-400:#2FE3C8; --brand-500:#07D8BE; --brand-600:#06B5A0; --brand-700:#048A7B;
+    --brand-800:#036156; --brand-900:#013731;
+    --gray-0:#FFFFFF; --gray-50:#F9FAFB; --gray-100:#F2F4F6; --gray-200:#E5E8EB;
+    --gray-300:#D1D6DB; --gray-400:#B0B8C1; --gray-500:#8B95A1; --gray-600:#6B7684;
+    --gray-700:#4E5968; --gray-800:#333D4B; --gray-900:#191F28;
+    --text-primary:#191F28; --text-secondary:#4E5968; --text-tertiary:#8B95A1;
+    --r-sm:8px; --r-md:12px; --r-lg:16px; --r-xl:20px; --r-2xl:24px;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+
+  body {
+    font-family:"Pretendard","Apple SD Gothic Neo",system-ui,-apple-system,sans-serif;
+    background:var(--gray-100);
+    color:var(--text-primary);
+    -webkit-text-size-adjust:100%;
+    -webkit-font-smoothing:antialiased;
+    word-break:keep-all;
+  }
+  .app {
+    position:relative; width:100%; max-width:390px; margin:0 auto; min-height:100dvh;
+    background:var(--gray-0); overflow:hidden;
+  }
+  /* 위쪽 분위기용 그라데이션 */
+  .app::before {
+    content:''; position:absolute; inset:0 0 auto; height:430px; z-index:0;
+    background:
+      radial-gradient(120% 78% at 50% 8%, rgba(7,216,190,.20) 0%, rgba(7,216,190,0) 62%),
+      linear-gradient(180deg, #EAFCF9 0%, #FFFFFF 100%);
+  }
+  .app > * { position:relative; z-index:1; }
+
+  /* 상단바 */
+  .topbar { height:58px; display:flex; align-items:center; gap:9px; padding:0 20px; }
+  .topbar img { width:26px; height:26px; border-radius:7px; object-fit:contain; }
+  .topbar .name { font-size:16px; font-weight:700; letter-spacing:-0.02em; }
+
+  /* 히어로 */
+  .hero { padding:8px 24px 0; text-align:center; }
+  .chip {
+    display:inline-block; font-size:12px; font-weight:700; line-height:16px;
+    padding:7px 13px; border-radius:999px; letter-spacing:-0.01em;
+    color:var(--brand-800); background:rgba(255,255,255,.82);
+    box-shadow:0 2px 10px rgba(1,55,49,.08), inset 0 0 0 1px rgba(7,216,190,.28);
+  }
+  .hero h1 {
+    margin-top:13px; font-size:27px; line-height:35px;
+    font-weight:800; letter-spacing:-0.04em;
+  }
+
+  /* 룰렛 */
+  .stage { padding:22px 0 4px; display:flex; justify-content:center; }
+  .wheelbox {
+    position:relative; width:min(334px, calc(100vw - 40px)); aspect-ratio:1;
+    filter:drop-shadow(0 18px 34px rgba(1,55,49,.22));
+  }
+  #wheel { width:100%; height:100%; display:block; transform:rotate(0deg); will-change:transform; }
+  #wheel .lbl { transform-box:fill-box; transform-origin:center; }
+  .pointer {
+    position:absolute; top:-9px; left:50%; z-index:3;
+    width:30px; height:38px; transform:translateX(-50%);
+    filter:drop-shadow(0 4px 8px rgba(1,55,49,.34));
+  }
+  .hub {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:96px; height:96px; border-radius:50%; z-index:2;
+    background:linear-gradient(180deg,#FFFFFF 0%,#F4FEFC 100%);
+    box-shadow:0 8px 22px rgba(1,55,49,.18), inset 0 0 0 5px rgba(255,255,255,.9), 0 0 0 1px rgba(7,216,190,.22);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .hub img { width:46px; height:46px; border-radius:12px; object-fit:contain; }
+
+  /* 소리 켜기 끄기 */
+  .sound {
+    margin-left:auto; width:34px; height:34px; border:0; padding:0; cursor:pointer;
+    border-radius:50%; background:rgba(255,255,255,.7);
+    box-shadow:inset 0 0 0 1px rgba(7,216,190,.24);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .sound svg { width:19px; height:19px; }
+  .sound .off { display:none; }
+  .sound.muted .on { display:none; }
+  .sound.muted .off { display:block; }
+  .sound.muted { background:var(--gray-100); box-shadow:none; }
+
+  /* 돌아갈 때 테두리 전구 깜빡임 */
+  @keyframes blink { 0%,49.9% { opacity:1 } 50%,100% { opacity:.15 } }
+  .spinning #wheel .bulb { animation:blink .26s steps(1,end) infinite; }
+  .spinning #wheel .bulb.b { animation-delay:.13s; }
+
+  /* 1등 당첨 순간 화면이 한 번 환해집니다 */
+  .flash {
+    position:fixed; inset:0; z-index:29; pointer-events:none; opacity:0;
+    background:radial-gradient(60% 42% at 50% 40%, #FFF6DC 0%, rgba(255,246,220,0) 72%);
+  }
+
+  /* 색종이 */
+  .confetti { position:fixed; inset:0; z-index:30; pointer-events:none; overflow:hidden; }
+  .confetti i {
+    position:absolute; top:-24px; display:block;
+    width:9px; height:15px; border-radius:2px;
+  }
+
+  /* 하단 */
+  .bottom { padding:20px 20px calc(28px + env(safe-area-inset-bottom)); }
+
+  .tickets {
+    display:flex; align-items:center; gap:11px;
+    padding:14px 16px; margin-bottom:13px;
+    border-radius:var(--r-md);
+    background:linear-gradient(180deg,#F4FEFC 0%,#EAFBF7 100%);
+    box-shadow:inset 0 0 0 1px rgba(7,216,190,.24);
+  }
+  .tickets .ic { width:22px; height:22px; flex-shrink:0; }
+  .tickets .tl { font-size:14px; line-height:20px; font-weight:600; color:var(--brand-800); }
+  .tickets .tv { margin-left:auto; font-size:14px; line-height:20px; font-weight:700; color:var(--brand-700); }
+  .tickets .tv b { font-size:20px; letter-spacing:-0.02em; }
+  .tickets.empty { background:var(--gray-100); box-shadow:none; }
+  .tickets.empty .tl, .tickets.empty .tv { color:var(--gray-500); }
+  .tickets.empty .ic { opacity:.45; }
+
+  .btn {
+    display:block; width:100%; border:0; cursor:pointer; position:relative; overflow:hidden;
+    font-family:inherit; font-size:17px; font-weight:800; line-height:24px; letter-spacing:-0.02em;
+    padding:18px; border-radius:var(--r-lg); color:#fff;
+    background:linear-gradient(180deg,#22DFC6 0%,#06B5A0 100%);
+    box-shadow:0 10px 24px rgba(7,216,190,.38), inset 0 1px 0 rgba(255,255,255,.45);
+    transition:transform .12s ease, box-shadow .2s ease;
+  }
+  .btn:active { transform:scale(.985); box-shadow:0 6px 16px rgba(7,216,190,.32); }
+  .btn:disabled {
+    background:var(--gray-200); color:var(--gray-400);
+    box-shadow:none; cursor:default;
+  }
+  .btn.ghost {
+    background:var(--gray-100); color:var(--text-secondary);
+    box-shadow:none; font-weight:700;
+  }
+  .hint { margin-top:13px; text-align:center; font-size:13px; line-height:18px; color:var(--text-tertiary); }
+  .hint b { color:var(--brand-600); font-weight:700; }
+
+  /* 당첨 내역 */
+  .history { margin-top:22px; padding-top:20px; border-top:1px solid var(--gray-100); }
+  .history h2 {
+    font-size:15px; line-height:22px; font-weight:700; letter-spacing:-0.02em;
+    display:flex; align-items:center; gap:7px;
+  }
+  .history h2 span { font-size:13px; font-weight:600; color:var(--text-tertiary); }
+  .hlist { margin-top:10px; }
+  .hrow { display:flex; align-items:center; gap:10px; padding:11px 0; border-bottom:1px solid var(--gray-100); }
+  .hrow:last-child { border-bottom:0; }
+  .hrow .dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .hrow .nm { font-size:14px; line-height:20px; font-weight:600; }
+  .hrow.lose .nm { color:var(--text-tertiary); font-weight:500; }
+  .hrow .dt { margin-left:auto; font-size:12px; line-height:17px; color:var(--gray-400); }
+
+  .private { margin-top:20px; text-align:center; font-size:12px; line-height:17px; color:var(--gray-400); }
+
+  /* 결과 */
+  .sheet {
+    position:fixed; inset:0; z-index:20; display:none;
+    align-items:center; justify-content:center; padding:24px;
+    background:rgba(1,55,49,.58);
+  }
+  .sheet.on { display:flex; }
+  .result {
+    position:relative; width:100%; max-width:320px; overflow:hidden;
+    background:var(--gray-0); border-radius:var(--r-2xl);
+    padding:36px 24px 22px; text-align:center;
+    animation:pop .3s cubic-bezier(.2,.9,.3,1.15);
+  }
+  .result.win::before {
+    content:''; position:absolute; inset:0 0 auto; height:190px;
+    background:radial-gradient(90% 100% at 50% 0%, rgba(7,216,190,.20) 0%, rgba(7,216,190,0) 70%);
+  }
+  /* 1등은 카드부터 다르게 */
+  .result.grand { box-shadow:0 0 0 2px #FFC53D, 0 18px 40px rgba(229,148,0,.28); }
+  .result.grand::before {
+    background:radial-gradient(90% 100% at 50% 0%, rgba(255,197,61,.34) 0%, rgba(255,197,61,0) 72%);
+    height:230px;
+  }
+  .result.grand .kicker { color:#B77400; letter-spacing:0.06em; }
+  .result.grand h3 { font-size:30px; line-height:38px; }
+  .result > * { position:relative; }
+  @keyframes pop { from{opacity:0;transform:scale(.92) translateY(10px)} to{opacity:1;transform:none} }
+  .result .mark { width:66px; height:66px; margin:0 auto 18px; }
+  .result .kicker { font-size:13px; line-height:18px; font-weight:700; color:var(--text-tertiary); letter-spacing:0.02em; }
+  .result h3 { margin-top:7px; font-size:27px; line-height:35px; font-weight:800; letter-spacing:-0.04em; }
+  .result p { margin-top:12px; font-size:14px; line-height:21px; color:var(--text-secondary); }
+  .result .btns { margin-top:26px; }
+  .result .btn { font-size:16px; padding:15px; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="topbar">
+    <img src="../versions/shared/rnd-logo.png" alt="">
+    <span class="name">알앤디</span>
+    <button class="sound" id="soundBtn" aria-label="소리 켜기 끄기">
+      <svg viewBox="0 0 20 20" fill="none" stroke="#06B5A0" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 7.5h2.5L10 4.5v11L6.5 12.5H4z" fill="#06B5A0" fill-opacity=".18"/>
+        <g class="on"><path d="M13 7.6a3.4 3.4 0 0 1 0 4.8"/><path d="M15.2 5.4a6.5 6.5 0 0 1 0 9.2"/></g>
+        <g class="off" stroke="#8B95A1"><path d="M13.4 8.2l3.4 3.6M16.8 8.2l-3.4 3.6"/></g>
+      </svg>
+    </button>
+  </div>
+
+  <div class="hero">
+    <span class="chip">친구 추천 감사합니다</span>
+    <h1>룰렛을 돌려<br>경품을 받아가세요</h1>
+  </div>
+
+  <div class="stage">
+    <div class="wheelbox">
+      <svg class="pointer" viewBox="0 0 30 38" aria-hidden="true">
+        <defs>
+          <linearGradient id="pg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#333D4B"/><stop offset="1" stop-color="#191F28"/>
+          </linearGradient>
+        </defs>
+        <path d="M15 37 L2.5 12 A14 14 0 0 1 27.5 12 Z" fill="url(#pg)" stroke="#FFFFFF" stroke-width="3" stroke-linejoin="round"/>
+        <circle cx="15" cy="12.5" r="3.4" fill="#FFFFFF" opacity=".92"/>
+      </svg>
+      <svg id="wheel" viewBox="0 0 320 320" aria-label="리워드 룰렛"></svg>
+      <div class="hub"><img src="../versions/shared/rnd-logo.png" alt=""></div>
+    </div>
+  </div>
+
+  <div class="bottom">
+    <div class="tickets" id="tickets">
+      <svg class="ic" viewBox="0 0 22 22" aria-hidden="true">
+        <path d="M3 6.5a1.5 1.5 0 0 1 1.5-1.5h13A1.5 1.5 0 0 1 19 6.5v2a2.5 2.5 0 0 0 0 5v2a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 3 15.5v-2a2.5 2.5 0 0 0 0-5z"
+              fill="none" stroke="#06B5A0" stroke-width="1.6"/>
+        <path d="M12.5 7.5v7" stroke="#06B5A0" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="2 2.4"/>
+      </svg>
+      <span class="tl">남은 응모권</span>
+      <span class="tv"><b id="ticketNum">0</b>장</span>
+    </div>
+
+    <button class="btn" id="spin">룰렛 돌리기</button>
+    <div class="hint" id="hint">당첨되면 <b>카카오 채널</b>로 안내해 드려요</div>
+
+    <div class="history" id="history" hidden>
+      <h2>내 응모 내역 <span id="hcount"></span></h2>
+      <div class="hlist" id="hlist"></div>
+    </div>
+
+    <p class="private">이 링크는 회원님 전용이에요. 다른 사람에게 공유하지 마세요</p>
+  </div>
+</div>
+
+<div class="sheet" id="sheet"><div class="result" id="result"></div></div>
+
+<script>
+/* ---------------------------------------------------------------
+   룰렛 칸.  p 는 그 칸에 걸릴 확률(%)이고 전부 더하면 100 입니다.
+   루미는 판이 고르게 보이도록 두 칸으로 나눠 담았습니다.
+   --------------------------------------------------------------- */
+var SLICES = [
+  { label:'맥북',       p:1,  tier:'r1',   rank:1, fx:'grand' },
+  { label:'루미 5천원', p:15, tier:'lumi',         fx:'small' },
+  { label:'아이패드',   p:2,  tier:'r2',   rank:2, fx:'big'   },
+  { label:'루미 1만원', p:20, tier:'lumi2',        fx:'small' },
+  { label:'에어팟',     p:3,  tier:'r3',   rank:3, fx:'big'   },
+  { label:'루미 5천원', p:15, tier:'lumi',         fx:'small' },
+  { label:'쿠팡이츠',   p:4,  tier:'r4',   rank:4, fx:'mid'   },
+  { label:'꽝',         p:40, tier:'none',         fx:'none'  }
+];
+
+var TIER = {
+  r1:   { fill:'url(#g1)', flat:'#F2A50C', text:'#3A2400', sub:'rgba(58,36,0,.6)'   },
+  r2:   { fill:'url(#g2)', flat:'#A8B2BC', text:'#2B333D', sub:'rgba(43,51,61,.62)' },
+  r3:   { fill:'url(#g3)', flat:'#C07E6B', text:'#57291D', sub:'rgba(87,41,29,.62)' },
+  r4:   { fill:'url(#g4)', flat:'#2CDCC2', text:'#013731', sub:'rgba(1,55,49,.5)'   },
+  lumi2:{ fill:'url(#g5)', flat:'#9BEFE1', text:'#013731' },
+  lumi: { fill:'url(#g6)', flat:'#DDFAF4', text:'#036156' },
+  none: { fill:'url(#g7)', flat:'#E4EAE9', text:'#95A0A0' }
+};
+
+/* 칸 안에는 글자만 씁니다 (그림 없음) */
+var ICON = {};
+
+/* ---------------------------------------------------------------
+   남은 응모권과 응모 내역.
+   지금은 화면 확인용 값입니다.
+   실제로는 링크(개인 토큰)에 묶인 값을 서버에서 받아옵니다.
+   --------------------------------------------------------------- */
+/* 판이 돌 때 글자를 똑바로 세워둘지 여부.
+   true  = 항상 똑바로 (지금 방식)
+   false = 판과 같이 기울어짐 (일반적인 룰렛 방식) */
+var UPRIGHT_LABELS = true;
+
+var TICKETS = 3;
+var HISTORY = [];
+
+var N = SLICES.length, STEP = 360 / N;
+var CX = 160, CY = 160, R = 147;
+
+function pt(deg, r) {
+  var a = (deg - 90) * Math.PI / 180;
+  return [CX + r * Math.cos(a), CY + r * Math.sin(a)];
+}
+
+(function drawWheel() {
+  var out =
+    '<defs>' +
+      '<linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">' +
+        '<stop offset="0" stop-color="#5DE9D4"/><stop offset="0.5" stop-color="#07D8BE"/>' +
+        '<stop offset="1" stop-color="#048A7B"/></linearGradient>' +
+      '<linearGradient id="g1" x1="0" y1="0" x2="0.4" y2="1">' +
+        '<stop offset="0" stop-color="#FFE9A8"/><stop offset="0.45" stop-color="#FFCB4D"/>' +
+        '<stop offset="1" stop-color="#EE9F06"/></linearGradient>' +
+      '<linearGradient id="g2" x1="0" y1="0" x2="0.4" y2="1">' +
+        '<stop offset="0" stop-color="#F2F5F8"/><stop offset="0.45" stop-color="#CFD6DD"/>' +
+        '<stop offset="1" stop-color="#9AA5B0"/></linearGradient>' +
+      '<linearGradient id="g3" x1="0" y1="0" x2="0.4" y2="1">' +
+        '<stop offset="0" stop-color="#FBE3DA"/><stop offset="0.45" stop-color="#E7B0A0"/>' +
+        '<stop offset="1" stop-color="#C4816E"/></linearGradient>' +
+      '<linearGradient id="g4" x1="0" y1="0" x2="0" y2="1">' +
+        '<stop offset="0" stop-color="#6BEFDA"/><stop offset="1" stop-color="#2CDCC2"/></linearGradient>' +
+      '<linearGradient id="g5" x1="0" y1="0" x2="0" y2="1">' +
+        '<stop offset="0" stop-color="#C2F7EE"/><stop offset="1" stop-color="#9BEFE1"/></linearGradient>' +
+      '<linearGradient id="g6" x1="0" y1="0" x2="0" y2="1">' +
+        '<stop offset="0" stop-color="#F4FEFC"/><stop offset="1" stop-color="#DDFAF4"/></linearGradient>' +
+      '<linearGradient id="g7" x1="0" y1="0" x2="0" y2="1">' +
+        '<stop offset="0" stop-color="#F3F7F6"/><stop offset="1" stop-color="#E1E8E7"/></linearGradient>' +
+      '<linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">' +
+        '<stop offset="0" stop-color="#FFF0BE"/><stop offset="0.5" stop-color="#FFC53D"/>' +
+        '<stop offset="1" stop-color="#E59400"/></linearGradient>' +
+      '<linearGradient id="gNone" x1="0" y1="0" x2="0" y2="1">' +
+        '<stop offset="0" stop-color="#F7F9FA"/><stop offset="1" stop-color="#E9EDF0"/></linearGradient>' +
+      '<radialGradient id="gloss" cx="50%" cy="50%" r="50%">' +
+        '<stop offset="0" stop-color="#FFFFFF" stop-opacity="0.20"/>' +
+        '<stop offset="0.62" stop-color="#FFFFFF" stop-opacity="0.04"/>' +
+        '<stop offset="1" stop-color="#013731" stop-opacity="0.07"/></radialGradient>' +
+    '</defs>' +
+    '<circle cx="160" cy="160" r="159" fill="url(#ring)"/>' +
+    '<circle cx="160" cy="160" r="150" fill="#FFFFFF"/>';
+
+  for (var i = 0; i < N; i++) {
+    var s = SLICES[i], t = TIER[s.tier];
+    var a0 = i * STEP, a1 = (i + 1) * STEP;
+    var p0 = pt(a0, R), p1 = pt(a1, R);
+    out += '<path d="M' + CX + ',' + CY + ' L' + p0[0].toFixed(2) + ',' + p0[1].toFixed(2) +
+           ' A' + R + ',' + R + ' 0 0,1 ' + p1[0].toFixed(2) + ',' + p1[1].toFixed(2) + ' Z" ' +
+           'fill="' + t.fill + '" stroke="#FFFFFF" stroke-width="3" stroke-linejoin="round"/>';
+  }
+  /* 은은한 광택 */
+  out += '<circle cx="160" cy="160" r="' + R + '" fill="url(#gloss)" pointer-events="none"/>';
+
+  /* 테두리 전구 */
+  for (var d = 0; d < 16; d++) {
+    var bp = pt(d * 22.5 + 11.25, 154.5);
+    out += '<circle class="bulb' + (d % 2 ? ' b' : '') + '" cx="' + bp[0].toFixed(2) + '" cy="' + bp[1].toFixed(2) + '" r="2.6" fill="#FFFFFF" opacity="0.88"/>';
+  }
+
+  /* 칸 하나의 글자를 한 덩어리(g.lbl)로 묶습니다.
+     판이 돌 때 이 덩어리를 통째로 반대로 돌려야 서로 어긋나지 않습니다.
+     칸이 넓어지는 바깥쪽에 두어야 옆 경계에 닿지 않습니다. */
+  for (var j = 0; j < N; j++) {
+    var sj = SLICES[j], tj = TIER[sj.tier];
+    var mid = j * STEP + STEP / 2;
+    var lines = sj.label.split(' ');
+    var ap = pt(mid, 110);
+    var ax = ap[0], ay = ap[1];
+    var g = '';
+
+    function label(y, size, txt, fill, ls) {
+      return '<text x="' + ax.toFixed(2) + '" y="' + y.toFixed(2) + '" ' +
+             'text-anchor="middle" dominant-baseline="middle" ' +
+             'font-family="Pretendard, Apple SD Gothic Neo, system-ui, sans-serif" ' +
+             'font-size="' + size + '" font-weight="800" letter-spacing="' + (ls || -0.5) + '" ' +
+             'fill="' + fill + '">' + txt + '</text>';
+    }
+
+    if (sj.rank) {
+      g += label(ay - 11, 10.5, sj.rank + '등', tj.sub, 0.6);
+      g += label(ay + 8, 15, sj.label, tj.text);
+    } else if (lines.length > 1) {
+      g += label(ay - 8, 13.5, lines[0], tj.text);
+      g += label(ay + 9, 13.5, lines[1], tj.text);
+    } else {
+      g += label(ay, 14, sj.label, tj.text);
+    }
+
+    out += '<g class="lbl">' + g + '</g>';
+  }
+  document.getElementById('wheel').innerHTML = out;
+})();
+
+var wheel = document.getElementById('wheel');
+var spinBtn = document.getElementById('spin');
+var hint = document.getElementById('hint');
+var sheet = document.getElementById('sheet');
+var resultBox = document.getElementById('result');
+var rotation = 0, spinning = false;
+
+function paintTickets() {
+  document.getElementById('ticketNum').textContent = TICKETS;
+  var out = TICKETS <= 0;
+  document.getElementById('tickets').classList.toggle('empty', out);
+  spinBtn.disabled = out;
+  spinBtn.textContent = out ? '응모권을 모두 사용했어요' : '룰렛 돌리기';
+  hint.innerHTML = out
+    ? '친구를 더 추천하면 응모권이 늘어나요'
+    : '당첨되면 <b>카카오 채널</b>로 안내해 드려요';
+}
+
+function paintHistory() {
+  var box = document.getElementById('history');
+  if (!HISTORY.length) { box.hidden = true; return; }
+  box.hidden = false;
+  document.getElementById('hcount').textContent = HISTORY.length + '회';
+  document.getElementById('hlist').innerHTML = HISTORY.map(function (h) {
+    var lose = h.label === '꽝';
+    return '<div class="hrow' + (lose ? ' lose' : '') + '">' +
+      '<span class="dot" style="background:' + TIER[h.tier].flat + '"></span>' +
+      '<span class="nm">' + (lose ? '당첨되지 않음' : (h.rank ? h.rank + '등 ' : '') + h.label) + '</span>' +
+      '<span class="dt">' + h.when + '</span>' +
+    '</div>';
+  }).join('');
+}
+
+/* ---------------------------------------------------------------
+   소리.  음원 파일 없이 브라우저가 직접 소리를 만들어 냅니다.
+   --------------------------------------------------------------- */
+var muted = false, ac = null;
+function audio() {
+  if (muted) return null;
+  if (!ac) { var C = window.AudioContext || window.webkitAudioContext; if (!C) return null; ac = new C(); }
+  if (ac.state === 'suspended') ac.resume();
+  return ac;
+}
+function beep(freq, dur, type, vol, delay) {
+  var a = audio(); if (!a) return;
+  var t0 = a.currentTime + (delay || 0);
+  var osc = a.createOscillator(), g = a.createGain();
+  osc.type = type || 'sine';
+  osc.frequency.setValueAtTime(freq, t0);
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(vol || 0.12, t0 + 0.012);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  osc.connect(g); g.connect(a.destination);
+  osc.start(t0); osc.stop(t0 + dur + 0.02);
+}
+function tickSound() { beep(1750, 0.035, 'square', 0.05); }
+var FANFARE = {
+  grand: { notes:[523.25, 659.25, 783.99, 1046.5, 1318.5, 1567.98], gap:0.085, dur:0.45, vol:0.15 },
+  big:   { notes:[523.25, 659.25, 783.99, 1046.5], gap:0.09, dur:0.34, vol:0.13 },
+  mid:   { notes:[523.25, 659.25, 783.99], gap:0.09, dur:0.28, vol:0.12 },
+  small: { notes:[659.25, 987.77], gap:0.08, dur:0.22, vol:0.10 }
+};
+function winSound(kind) {
+  var f = FANFARE[kind] || FANFARE.small;
+  f.notes.forEach(function (n, i) { beep(n, f.dur, 'triangle', f.vol, i * f.gap); });
+  if (kind === 'grand') {
+    [523.25, 783.99, 1046.5].forEach(function (n) { beep(n, 1.1, 'sine', 0.07, 0.52); });
+  }
+}
+function loseSound() {
+  beep(392, 0.22, 'sine', 0.09, 0);
+  beep(311, 0.34, 'sine', 0.08, 0.16);
+}
+
+document.getElementById('soundBtn').addEventListener('click', function () {
+  muted = !muted;
+  this.classList.toggle('muted', muted);
+  if (!muted) beep(880, 0.09, 'triangle', 0.1);
+});
+
+/* ---------------------------------------------------------------
+   색종이
+   --------------------------------------------------------------- */
+var MINT_COLORS = ['#07D8BE', '#5DE9D4', '#048A7B', '#B8F5EC', '#FFFFFF'];
+var GOLD_COLORS = ['#FFC53D', '#FFE9A8', '#E59400', '#07D8BE', '#FFFFFF'];
+
+/* 등급별 축하 효과의 세기 */
+var FX = {
+  grand: { count:170, spread:1.35, colors:GOLD_COLORS, flash:true  },
+  big:   { count:110, spread:1.10, colors:MINT_COLORS, flash:false },
+  mid:   { count:70,  spread:1.00, colors:MINT_COLORS, flash:false },
+  small: { count:36,  spread:0.85, colors:MINT_COLORS, flash:false },
+  none:  { count:0,   spread:0,    colors:MINT_COLORS, flash:false }
+};
+
+function confetti(cfg) {
+  if (!cfg || !cfg.count) return;
+  var box = document.createElement('div');
+  box.className = 'confetti';
+  var fallTo = window.innerHeight + 60;
+  for (var i = 0; i < cfg.count; i++) {
+    var p = document.createElement('i');
+    p.style.left = (Math.random() * 100) + '%';
+    p.style.background = cfg.colors[(Math.random() * cfg.colors.length) | 0];
+    var big = Math.random() < 0.22 * cfg.spread;
+    if (Math.random() < 0.35) {
+      p.style.width = (big ? 9 : 7) + 'px'; p.style.height = (big ? 9 : 7) + 'px'; p.style.borderRadius = '50%';
+    } else if (big) {
+      p.style.width = '11px'; p.style.height = '18px';
+    }
+    box.appendChild(p);
+
+    var dx = ((Math.random() * 2 - 1) * 90 * cfg.spread).toFixed(0);
+    var rot = ((Math.random() * 6 - 3) * 360).toFixed(0);
+    var sway = (Math.random() * 2 - 1) * 40 * cfg.spread;
+    p.animate(
+      [
+        { transform:'translate3d(0,0,0) rotate(0deg)', opacity:1 },
+        { transform:'translate3d(' + sway.toFixed(0) + 'px,' + (fallTo * 0.5) + 'px,0) rotate(' + (rot / 2) + 'deg)', opacity:1, offset:0.5 },
+        { transform:'translate3d(' + dx + 'px,' + fallTo + 'px,0) rotate(' + rot + 'deg)', opacity:0 }
+      ],
+      { duration: 2200 + Math.random() * 1800 * cfg.spread,
+        delay: Math.random() * 500,
+        easing: 'cubic-bezier(.25,.55,.5,1)', fill: 'forwards' }
+    );
+  }
+  document.body.appendChild(box);
+  window.setTimeout(function () { box.remove(); }, 6200);
+}
+
+/* 1등에서만 화면이 한 번 환해집니다 */
+function flash() {
+  var f = document.createElement('div');
+  f.className = 'flash';
+  document.body.appendChild(f);
+  f.animate(
+    [{ opacity:0 }, { opacity:.85, offset:.12 }, { opacity:0 }],
+    { duration: 900, easing:'ease-out', fill:'forwards' }
+  );
+  window.setTimeout(function () { f.remove(); }, 1000);
+}
+
+/* 판이 도는 동안, 칸 하나가 바늘을 지날 때마다 딸깍 소리를 냅니다 */
+function runTicks() {
+  var prev = null, acc = 0, alive = true;
+  function angleNow() {
+    var m = getComputedStyle(wheel).transform;
+    if (!m || m === 'none') return 0;
+    var v = m.replace(/matrix\(|\)/g, '').split(',');
+    var a = Math.atan2(parseFloat(v[1]), parseFloat(v[0])) * 180 / Math.PI;
+    return (a + 360) % 360;
+  }
+  function frame() {
+    if (!alive) return;
+    var a = angleNow();
+    if (prev !== null) {
+      acc += (a - prev + 360) % 360;
+      while (acc >= STEP) { tickSound(); acc -= STEP; }
+    }
+    prev = a;
+    window.requestAnimationFrame(frame);
+  }
+  window.requestAnimationFrame(frame);
+  return function () { alive = false; };
+}
+
+function pickIndex() {
+  var total = SLICES.reduce(function (a, s) { return a + s.p; }, 0);
+  var r = Math.random() * total, acc = 0;
+  for (var i = 0; i < N; i++) { acc += SLICES[i].p; if (r < acc) return i; }
+  return N - 1;
+}
+
+var stopTicks = null;
+function spin() {
+  if (spinning || TICKETS <= 0) return;
+  spinning = true;
+  document.querySelector('.wheelbox').classList.add('spinning');
+  TICKETS -= 1;
+  document.getElementById('ticketNum').textContent = TICKETS;
+  spinBtn.disabled = true;
+  spinBtn.textContent = '돌아가는 중';
+
+  var idx = pickIndex();
+  var jitter = (Math.random() * 2 - 1) * (STEP / 2 - 7);
+  var target = rotation + 360 * 6 - (rotation % 360) - (idx * STEP + STEP / 2) + jitter;
+
+  var EASE = 'transform 4.4s cubic-bezier(.15,.72,.18,1)';
+  wheel.style.transition = EASE;
+  wheel.style.transform = 'rotate(' + target + 'deg)';
+
+  /* 판이 도는 만큼 글자 덩어리를 통째로 반대로 돌려서 항상 똑바로 보이게 합니다 */
+  if (UPRIGHT_LABELS) {
+    var labels = wheel.querySelectorAll('.lbl');
+    for (var k = 0; k < labels.length; k++) {
+      labels[k].style.transition = EASE;
+      labels[k].style.transform = 'rotate(' + (-target) + 'deg)';
+    }
+  }
+  rotation = target;
+
+  audio();
+  stopTicks = runTicks();
+  window.setTimeout(function () { showResult(SLICES[idx]); }, 4600);
+}
+
+var MARK_GRAND =
+  '<svg class="mark" viewBox="0 0 66 66">' +
+  '<circle cx="33" cy="33" r="33" fill="#FFF7DE"/>' +
+  '<circle cx="33" cy="33" r="25" fill="none" stroke="#FFD469" stroke-width="2"/>' +
+  '<path d="M17 41 L21 22 L27.5 30 L33 19 L38.5 30 L45 22 L49 41 Z" fill="#F2A50C"/>' +
+  '<path d="M17 44.5 H49" stroke="#E59400" stroke-width="3.4" stroke-linecap="round"/></svg>';
+var MARK_WIN =
+  '<svg class="mark" viewBox="0 0 66 66"><circle cx="33" cy="33" r="33" fill="#E5FBF8"/>' +
+  '<circle cx="33" cy="33" r="25" fill="none" stroke="#7CEEDC" stroke-width="2"/>' +
+  '<path d="M21 33.5 L29.5 42 L45 25.5" fill="none" stroke="#06B5A0" stroke-width="4.4" ' +
+  'stroke-linecap="round" stroke-linejoin="round"/></svg>';
+var MARK_LOSE =
+  '<svg class="mark" viewBox="0 0 66 66"><circle cx="33" cy="33" r="33" fill="#F2F4F6"/>' +
+  '<path d="M22 33 H44" stroke="#B0B8C1" stroke-width="4.4" stroke-linecap="round"/></svg>';
+
+function nowLabel() {
+  var d = new Date();
+  return (d.getMonth() + 1) + '월 ' + d.getDate() + '일';
+}
+
+function showResult(s) {
+  var win = s.label !== '꽝';
+  document.querySelector('.wheelbox').classList.remove('spinning');
+  if (stopTicks) { stopTicks(); stopTicks = null; }
+  var kind = s.fx || 'small';
+  if (win) {
+    winSound(kind);
+    confetti(FX[kind]);
+    if (FX[kind].flash) flash();
+  } else { loseSound(); }
+  resultBox.className = 'result' + (win ? ' win ' + kind : '');
+  resultBox.innerHTML =
+    (win ? (kind === 'grand' ? MARK_GRAND : MARK_WIN) : MARK_LOSE) +
+    '<div class="kicker">' + (win ? (s.rank ? s.rank + '등 당첨' : '축하합니다') : '아쉬워요') + '</div>' +
+    '<h3>' + (win ? s.label : '다음 기회에') + '</h3>' +
+    '<p>' + (win
+      ? '경품 받는 방법은 카카오 채널로 개별 안내해 드립니다'
+      : '이번엔 당첨되지 않았어요<br>친구를 더 추천하면 기회가 늘어나요') + '</p>' +
+    '<div class="btns"><button class="btn' + (win ? '' : ' ghost') + '" onclick="closeSheet()">확인</button></div>';
+  sheet.classList.add('on');
+
+  HISTORY.unshift({ label:s.label, tier:s.tier, rank:s.rank, when:nowLabel() });
+  spinning = false;
+  paintTickets();
+  paintHistory();
+}
+
+function closeSheet() { sheet.classList.remove('on'); }
+
+paintTickets();
+paintHistory();
+spinBtn.addEventListener('click', spin);
+sheet.addEventListener('click', function (e) { if (e.target === sheet) closeSheet(); });
+</script>
+</body>
+</html>
