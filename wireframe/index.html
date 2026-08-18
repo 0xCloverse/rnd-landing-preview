@@ -560,6 +560,17 @@ views['/rotation'] = function (d) {
     '</div>';
 };
 
+/* 사전가입을 실제로 했는지 판단합니다.
+   기록만 있고 값이 전부 비어 있으면(검사를 꺼둔 채 빈칸으로 통과한 경우)
+   안 한 것으로 봅니다. */
+function hasSignup(d) {
+  if (!d.signup) return false;
+  for (var i = 0; i < ROTATION_FIELDS.length; i++) {
+    if (String(d.signup[ROTATION_FIELDS[i].key] || '').trim() !== '') return true;
+  }
+  return false;
+}
+
 /* 미팅 고르기 (로테이션 신청의 첫 화면) */
 function pad2(n) { return (n < 10 ? '0' : '') + n; }
 function meetingOf(dateStr) {
@@ -662,7 +673,7 @@ views['/rotation-apply'] = function (d) {
   for (i in (d.signup || {})) v[i] = d.signup[i];
   for (i in (d.rotationDraft || {})) v[i] = d.rotationDraft[i];
   for (i in (d.rotation || {})) v[i] = d.rotation[i];
-  var prefilled = !!d.signup;
+  var prefilled = hasSignup(d);
 
   /* 기본 정보.
      사전가입을 한 사람에게는 확인용 표만 보여줍니다. 여기서 고치지는 않습니다.
@@ -866,7 +877,7 @@ function keepDraft(d) {
 
 function submitRotation() {
   var d = load();
-  var prefilled = !!d.signup;
+  var prefilled = hasSignup(d);
 
   /* 사전가입을 한 사람은 기본 정보를 화면에서 받지 않고, 저장된 값을 그대로 씁니다 */
   var v = prefilled ? {} : readFields(ROTATION_FIELDS);
