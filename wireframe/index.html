@@ -205,6 +205,35 @@
   }
   .wheelshot .hubmark img { width: 38px; height: 38px; border-radius: 10px; }
 
+  /* 팝업 (인스타그램 팔로우 안내) */
+  .modal {
+    display: none;
+    position: fixed; inset: 0; z-index: 30;
+    align-items: center; justify-content: center; padding: 24px;
+    background: rgba(0,0,0,.55);
+  }
+  .modal.on { display: flex; }
+  .modal .box {
+    width: 100%; max-width: 320px; background: #fff;
+    border: 1px solid #000; padding: 24px 20px 20px;
+  }
+  .modal .must {
+    display: inline-block; border: 1px solid #000;
+    font-size: 11px; font-weight: 700; padding: 2px 7px; margin-bottom: 12px;
+  }
+  .modal h2 { font-size: 18px; line-height: 1.4; margin-bottom: 8px; }
+  .modal p { font-size: 13px; line-height: 1.6; color: #444; }
+  .modal .account {
+    margin: 16px 0; padding: 12px;
+    border: 1px solid #ccc; text-align: center;
+    font-size: 15px; font-weight: 700;
+  }
+  .modal .later {
+    display: block; width: 100%; margin-top: 10px;
+    font: inherit; font-size: 13px; color: #777;
+    background: none; border: 0; padding: 8px; cursor: pointer; text-decoration: underline;
+  }
+
   /* 사이트 푸터. 항상 맨 아래 */
   .sitefoot { padding: 22px 16px 30px; text-align: center; background: #fafafa; }
   .sitefoot .links { font-size: 12px; margin-bottom: 10px; }
@@ -220,6 +249,17 @@
 <body>
 
 <div id="stage"></div>
+
+<div class="modal" id="follow">
+  <div class="box">
+    <span class="must">필수</span>
+    <h2>인스타그램 팔로우는<br>필수예요</h2>
+    <p>사전가입은 인스타그램 팔로우까지 마쳐야 완료됩니다. 아래 버튼을 눌러 팔로우해 주세요.</p>
+    <div class="account">@알앤디_계정명</div>
+    <button class="btn" onclick="alert('인스타그램 계정 주소는 아직 정해지지 않았습니다')">인스타그램에서 팔로우하기</button>
+    <button class="later" onclick="closeFollow()">닫기</button>
+  </div>
+</div>
 
 <div class="menu" id="menu">
   <nav id="menunav"></nav>
@@ -237,9 +277,9 @@
 
    true 로 두면 아무것도 입력하지 않아도 다음 단계로 넘어갑니다.
    (필수값, 약관 동의, 학력 인증 전부 통과)
-   지금은 false 라, 제대로 입력해야 넘어갑니다.
+   지금은 뼈대를 빠르게 훑어보는 단계라 true 입니다.
    --------------------------------------------------------------- */
-var SKIP_VALIDATION = false;
+var SKIP_VALIDATION = true;
 
 /* ---------------------------------------------------------------
    1. 신청서에서 받을 항목
@@ -365,6 +405,9 @@ function renderMenu(path) {
       (m[2] ? '<span class="sub">' + esc(m[2]) + '</span>' : '') + '</a>';
   }).join('');
 }
+function openFollow() { document.getElementById('follow').classList.add('on'); }
+function closeFollow() { document.getElementById('follow').classList.remove('on'); }
+
 function toggleMenu() {
   var m = document.getElementById('menu');
   m.classList.contains('on') ? closeMenu() : openMenu();
@@ -916,6 +959,8 @@ function submitAgree() {
   delete d.signupDraft;
   save(d);
   location.hash = '#/done';
+  /* 제출 직후 인스타그램 팔로우 안내를 띄웁니다 */
+  window.setTimeout(openFollow, 260);
 }
 
 /* 학력 인증.
